@@ -72,4 +72,8 @@ Route::get('key', function() {
     }
 });
 
+Route::get('envs', function() {
+    return $_ENV;
+})
+
 require __DIR__.'/auth.php';

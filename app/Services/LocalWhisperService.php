@@ -10,11 +10,14 @@ class LocalWhisperService
 {
     public function __construct(private $ssh = null, private $username = '', private $privateKey = '')
     {
-        $this->username = env('SSH_USERNAME');
+        $username = 'forge';
+        $host = '34.90.54.45';
+
+        $this->username = $username;
 
         $this->privateKey = PublicKeyLoader::load(file_get_contents(base_path('.ssh/id_rsa')));
 
-        $this->ssh = new SSH2(env('SSH_HOST'), '22');
+        $this->ssh = new SSH2($host);
     }
 
     protected function toTranscribe($audioUrl)
