@@ -10,12 +10,13 @@ class LocalWhisperService
 {
     public function __construct(private $ssh = null, private $username = '', private $privateKey = '')
     {
-        $username = 'forge';
-        $host = '34.90.54.45';
+        $username = config('services.ssh.username');
+        $host = config('services.ssh.host');
+        $keyPath = config('services.ssh.key_path');
 
         $this->username = $username;
 
-        $this->privateKey = PublicKeyLoader::load(file_get_contents(base_path('.ssh/id_rsa')));
+        $this->privateKey = PublicKeyLoader::load(file_get_contents($keyPath));
 
         $this->ssh = new SSH2($host);
     }
