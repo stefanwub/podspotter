@@ -39,7 +39,8 @@ class RunLocalWhisper implements ShouldQueue
 
             if ($output['error']) {
                 $this->whisperJob->update([
-                    'status' => 'failed'
+                    'status' => 'failed',
+                    'error_messasge' => $output['error_message']
                 ]);
 
                 return;
@@ -56,7 +57,8 @@ class RunLocalWhisper implements ShouldQueue
             $this->whisperJob->runNextLocal();
         } catch(Exception $e) {
             $this->whisperJob->update([
-                'status' => 'failed'
+                'status' => 'failed',
+                'error_message' => 'From exception: ' . $e->getMessage()
             ]);
 
             throw new Exception($e->getMessage());
