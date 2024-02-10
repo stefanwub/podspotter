@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Jobs\RunLocalWhisper;
 use App\Services\LocalWhisperService;
+use Cache;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +39,7 @@ class WhisperJob extends Model
 
         self::saved(function (WhisperJob $whisperJob): void {
             if ($whisperJob->getOriginal('status') != $whisperJob->status && $whisperJob->status === 'succeeded') {
-                $whisperJob->episode->createSections();
+                $whisperJob->episode?->createSections();
             }
         });
     }
@@ -79,13 +80,17 @@ class WhisperJob extends Model
         ]);
     }
 
-    public function localQueueIsEmpty($count = 1)
+    public static function localQueueIsEmpty($count = 1)
     {
         return WhisperJob::where('status', 'running')->count() < $count;
     }
     
-    public function runNextLocal()
+    public static function runNextLocal()
     {
+        if (Cache::has('pause_whisper_jobs')) return;
+
+        if (! self::localQueueIsEmpty()) return;
+
         $nextWhisperJob = WhisperJob::where('status', 'queued')->first();
 
         if ($nextWhisperJob) {
@@ -95,8 +100,10 @@ class WhisperJob extends Model
 
     public function runLocal()
     {
+        if (Cache::has('pause_whisper_jobs')) return;
+
         if (! $this->localQueueIsEmpty()) return;
 
-        RunLocalWhisper::dispatch($this);
+        RunLocalWhisper::dispatch($this)->onQueue('whisper');
     }
 }

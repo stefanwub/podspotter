@@ -17,6 +17,7 @@
         "pgvector/pgvector": "^0.1.4",
         "phpseclib/phpseclib": "^3.0",
         "podcastindex/podcastindex-php": "^1.0",
+        "predis/predis": "^2.2",
         "symfony/browser-kit": "^7.0",
         "symfony/dom-crawler": "^7.0",
         "symfony/http-client": "^7.0",

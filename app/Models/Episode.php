@@ -25,7 +25,7 @@ class Episode extends Model
     protected static function booted()
     {
         self::creating(function (Episode $episode): void {
-            // $episode->status = 'imported';
+            $episode->status = 'imported';
         });
     }
 
@@ -120,26 +120,24 @@ class Episode extends Model
             $this->createSection($text, $start, $end);
         }
 
-        // $this->update([
-        //     'status' => 'transcribed',
-        //     'transcribed_at' => now()
-        // ]);
+        $this->update([
+            'status' => 'transcribed',
+            'transcribed_at' => now()
+        ]);
     }
 
     public function createSection($text, $start, $end)
     {
-        dispatch(function() use ($text, $start, $end) {
-            $embedding = OpenAI::embeddings()->create([
-                'model' => 'text-embedding-3-small',
-                'input' => $text
-            ]);
+        $embedding = OpenAI::embeddings()->create([
+            'model' => 'text-embedding-3-small',
+            'input' => $text
+        ]);
 
-            $this->sections()->create([
-                'content' => $text,
-                'start_time' => $start,
-                'end_time' => $end,
-                'embedding' => $embedding->embeddings[0]->embedding
-            ]); 
-        });
+        $this->sections()->create([
+            'content' => $text,
+            'start_time' => $start,
+            'end_time' => $end,
+            'embedding' => $embedding->embeddings[0]->embedding
+        ]); 
     }
 }
