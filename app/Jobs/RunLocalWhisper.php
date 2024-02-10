@@ -40,7 +40,7 @@ class RunLocalWhisper implements ShouldQueue
             if ($output['error']) {
                 $this->whisperJob->update([
                     'status' => 'failed',
-                    'error_messasge' => $output['error_message']
+                    'error_message' => $output['error_message']
                 ]);
 
                 return;
