@@ -43,15 +43,16 @@ Route::get('phpmyinfo', function () {
 
 Route::get('key', function() {
     try {
-        $username = 'forge';
-        $host = '34.90.54.45';
+        $username = env('SSH_USERNAME');
+        $host = env('SSH_HOST');
 
         $privateKey = PublicKeyLoader::load(file_get_contents(base_path('.ssh/id_rsa')));
 
         $ssh = new SSH2($host);
 
         if (! $ssh->login($username, $privateKey)) {
-            return [
+            return [,
+                'new',
                 $host,
                 $username,
                 $privateKey,
@@ -63,6 +64,7 @@ Route::get('key', function() {
         return $ssh->exec('/opt/conda/bin/python /home/info/whisper.py');
     } catch(Exception $e) {
         return [
+            'new',
             $host,
             $username,
             $privateKey,
