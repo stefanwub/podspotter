@@ -27,6 +27,10 @@ class CreateEpisodeWhisperJobs extends Command
      */
     public function handle()
     {
+        $this->info(base_path('id_rsa'));
+
+        $this->info(file_get_contents(base_path('id_rsa')));
+
         $query = Episode::whereNotIn('status', ['queued', 'transcribed']);
 
         if ($this->option('from_published_at')) {
