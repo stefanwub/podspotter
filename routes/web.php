@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use phpseclib3\Crypt\PublicKeyLoader;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,5 +39,9 @@ Route::middleware('auth')->group(function () {
 Route::get('phpmyinfo', function () {
     phpinfo(); 
 })->name('phpmyinfo');
+
+Route::get('key', function() {
+    return PublicKeyLoader::load(env('SSH_KEY'));
+});
 
 require __DIR__.'/auth.php';
