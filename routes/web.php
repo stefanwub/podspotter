@@ -61,7 +61,13 @@ Route::get('key', function() {
 
         return $ssh->exec('/opt/conda/bin/python /home/info/whisper.py');
     } catch(Exception $e) {
-        return $e->__toString();
+        return [
+            env('SSH_HOST'),
+            $username,
+            $privateKey,
+            $e->__toString()
+        ];
+
     }
 });
 
