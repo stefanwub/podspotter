@@ -73,7 +73,7 @@ Route::get('key', function() {
 });
 
 Route::get('envs', function() {
-    return $_ENV;
+    return Dotenv\Dotenv::createArrayBacked(base_path())->load();
 });
 
 require __DIR__.'/auth.php';

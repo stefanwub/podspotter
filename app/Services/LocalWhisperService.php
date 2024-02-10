@@ -36,7 +36,7 @@ class LocalWhisperService
 
             $json = json_decode($output, true);
 
-            if (! count($json)) {
+            if (! is_array($json)) {
                 return [
                     'error' => true,
                     'error_message' => $output
