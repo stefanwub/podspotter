@@ -12,7 +12,7 @@ class LocalWhisperService
     {
         $this->username = env('SSH_USERNAME');
 
-        $this->privateKey = PublicKeyLoader::load(env('SSH_KEY'));
+        $this->privateKey = env('SSH_KEY');
 
         $this->ssh = new SSH2(env('SSH_HOST'), '22');
     }
