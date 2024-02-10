@@ -26,9 +26,18 @@ class LocalWhisperService
 
             $this->ssh->setTimeout(0);
 
-            $output = $this->ssh->exec('/opt/conda/bin/python /home/info/whisper.py ' . $audioUrl);
+            $output = $this->ssh->exec('/opt/conda/bin/python /home/info/whisper.py ' . strtok($audioUrl, '?'));
 
-            return json_decode($output, true);
+            $json = json_decode($output, true);
+
+            if (! count($json)) {
+                return [
+                    'error' => true,
+                    'error_message' => $output
+                ];
+            }
+
+            return $json;
             
         } catch (Exception $e) {
             return [

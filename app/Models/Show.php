@@ -91,10 +91,10 @@ class Show extends Model
         switch (count($parts)) {
             case 2: // Format is MM:SS
                 list($minutes, $seconds) = $parts;
-                return $minutes * 60 + $seconds;
+                return (int)$minutes * 60 + (int)$seconds;
             case 3: // Format is HH:MM:SS
                 list($hours, $minutes, $seconds) = $parts;
-                return $hours * 3600 + $minutes * 60 + $seconds;
+                return (int)$hours * 3600 + (int)$minutes * 60 + (int)$seconds;
             default:
                 // Invalid format, you could return false, 0, or trigger an error
                 return 0;
