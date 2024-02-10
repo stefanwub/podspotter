@@ -41,7 +41,11 @@ Route::get('phpmyinfo', function () {
 })->name('phpmyinfo');
 
 Route::get('key', function() {
-    return PublicKeyLoader::load(env('SSH_KEY'));
+    try {
+        return PublicKeyLoader::load(env('SSH_KEY'));
+    } catch(Exception $e) {
+        return $e->__toString();
+    }
 });
 
 require __DIR__.'/auth.php';
