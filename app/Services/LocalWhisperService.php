@@ -21,7 +21,10 @@ class LocalWhisperService
     {
         try {
             if (!$this->ssh->login($this->username, $this->privateKey)) {
-                exit('Login failed');
+                return [
+                    'error' => true,
+                    'error_message' => 'Login failed'
+                ];
             }
 
             $this->ssh->setTimeout(0);

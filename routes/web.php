@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Net\SSH2;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +43,20 @@ Route::get('phpmyinfo', function () {
 
 Route::get('key', function() {
     try {
-        return PublicKeyLoader::load(env('SSH_KEY'));
+        $username = env('SSH_USERNAME');
+
+        $privateKey = PublicKeyLoader::load(file_get_contents(base_path('.ssh/id_rsa')));
+
+        $ssh = new SSH2(env('SSH_HOST'), '22');
+
+        if (! $ssh->login($username, $privateKey)) {
+            return [
+                'error' => true,
+                'error_message' => 'Login failed'
+            ];
+        }
+
+        return $ssh->exec('/opt/conda/bin/python /home/info/whisper.py');
     } catch(Exception $e) {
         return $e->__toString();
     }
