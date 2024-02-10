@@ -35,4 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('phpmyinfo', function () {
+    phpinfo(); 
+})->name('phpmyinfo');
+
 require __DIR__.'/auth.php';
