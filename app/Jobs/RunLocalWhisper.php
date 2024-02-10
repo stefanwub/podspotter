@@ -47,8 +47,8 @@ class RunLocalWhisper implements ShouldQueue
 
             $this->whisperJob->update([
                 'status' => 'succeeded',
-                // 'succeeded_at' => now(),
-                // 'execution_time' => round($output['execution_time'], 3) * 1000,
+                'succeeded_at' => now(),
+                'execution_time' => round($output['execution_time'], 3) * 1000,
                 'text' => $output['text'],
                 'chunks' => $output['chunks'],
             ]);

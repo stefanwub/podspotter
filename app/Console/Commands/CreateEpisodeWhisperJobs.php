@@ -13,7 +13,7 @@ class CreateEpisodeWhisperJobs extends Command
      *
      * @var string
      */
-    protected $signature = 'app:create-episode-whisper-jobs {--from_published_at=}';
+    protected $signature = 'app:create-episode-whisper-jobs {--limit=100} {--from_published_at=}';
 
     /**
      * The console command description.
@@ -35,7 +35,7 @@ class CreateEpisodeWhisperJobs extends Command
             $query->where('published_at', '>', Carbon::parse('last year'));
         }
 
-        $episodes = $query->limit(100)->get();
+        $episodes = $query->limit($this->option('limit'))->get();
 
         foreach ($episodes as $episode) {
             $episode->createWhisperJob();
