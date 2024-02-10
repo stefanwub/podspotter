@@ -51,7 +51,7 @@ Route::get('key', function() {
         $ssh = new SSH2($host);
 
         if (! $ssh->login($username, $privateKey)) {
-            return [,
+            return [
                 'new',
                 $host,
                 $username,
