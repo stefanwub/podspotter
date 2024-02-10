@@ -34,6 +34,12 @@ return [
     'podcast_index' => [
         'key' => env('PODCAST_INDEX_KEY'),
         'secret' => env('PODCAST_INDEX_SECRET')
+    ],
+
+    'ssh' => [
+        'username' => env('SSH_USERNAME'),
+        'host' => env('SSH_HOST'),
+        'key_path' => env('SSH_KEY_PATH', '/home/forge/podspotter.nl/.ssh/id_rsa')
     ]
 
 ];

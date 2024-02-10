@@ -43,10 +43,10 @@ Route::get('phpmyinfo', function () {
 
 Route::get('key', function() {
     try {
-        $username = env('SSH_USERNAME');
-        $host = env('SSH_HOST');
+        $username = config('services.ssh.username');
+        $host = config('services.ssh.host');
 
-        $privateKey = PublicKeyLoader::load(file_get_contents(base_path('.ssh/id_rsa')));
+        $privateKey = PublicKeyLoader::load(file_get_contents(config('services.ssh.key_path')));
 
         $ssh = new SSH2($host);
 
