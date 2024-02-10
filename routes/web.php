@@ -51,6 +51,9 @@ Route::get('key', function() {
 
         if (! $ssh->login($username, $privateKey)) {
             return [
+                env('SSH_HOST'),
+                $username,
+                $privateKey,
                 'error' => true,
                 'error_message' => 'Login failed'
             ];
