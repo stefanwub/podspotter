@@ -29,8 +29,10 @@ class CreateEpisodeWhisperJobs extends Command
     {
         $query = Episode::whereIn('status', '!=', ['queued', 'transcribed']);
 
-        if ($this->argument('from_published_at')) {
-            $query->where('published_at', '>', Carbon::parse($this->argument('from_published_at')));
+        if ($this->option('from_published_at')) {
+            $query->where('published_at', '>', Carbon::parse($this->option('from_published_at')));
+        } else {
+            $query->where('published_at', '>', Carbon::parse('last year'));
         }
 
         $episodes = $query->limit(100)->get();
