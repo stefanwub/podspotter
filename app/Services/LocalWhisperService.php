@@ -44,7 +44,7 @@ class LocalWhisperService
             exit('Login failed');
         }
 
-        return $this->ssh->exec('conda activate base && nohup /opt/conda/bin/python /home/info/whisper.py ' . $whisperJob->id . ' > /dev/null 2>&1 &');
+        return $this->ssh->exec('nohup /opt/conda/bin/python /home/info/whisper.py ' . $whisperJob->id . ' > /dev/null 2>&1 &');
     }
 
     public static function transcribe(WhisperJob $whisperJob)
