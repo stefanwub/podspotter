@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Services\LocalWhisperService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,6 +77,11 @@ Route::get('key', function() {
 
 Route::get('envs', function() {
     return Dotenv\Dotenv::createArrayBacked(base_path())->load();
+});
+
+
+Route::get('server-processes', function() {
+    return LocalWhisperService::processes();
 });
 
 require __DIR__.'/auth.php';

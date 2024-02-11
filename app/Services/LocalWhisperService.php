@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\WhisperJob;
 use Exception;
 use phpseclib3\Crypt\PublicKeyLoader;
 use phpseclib3\Net\SSH2;
@@ -21,41 +22,33 @@ class LocalWhisperService
         $this->ssh = new SSH2($host);
     }
 
-    protected function toTranscribe($audioUrl)
+    protected function getProcesses()
     {
-        try {
-            if (!$this->ssh->login($this->username, $this->privateKey)) {
-                return [
-                    'error' => true,
-                    'error_message' => 'Login failed'
-                ];
-            }
-
-            $this->ssh->setTimeout(0);
-
-            $output = $this->ssh->exec('/opt/conda/bin/python /home/info/whisper.py ' . strtok($audioUrl, '?'));
-
-            $json = json_decode($output, true);
-
-            if (! is_array($json)) {
-                return [
-                    'error' => true,
-                    'error_message' => $output
-                ];
-            }
-
-            return $json;
-            
-        } catch (Exception $e) {
-            return [
-                'error' => true,
-                'error_message' => $e->getMessage()
-            ];
+        if (!$this->ssh->login($this->username, $this->privateKey)) {
+            exit('Login failed');
         }
+
+        $output = $this->ssh->exec('ps -u ' . $this->username); 
+
+        return $output;
     }
 
-    public static function transcribe($audioUrl)
+    public static function processes()
     {
-        return app(LocalWhisperService::class)->toTranscribe($audioUrl);
+        return app(LocalWhisperService::class)->getProcesses();
+    }
+
+    protected function toTranscribe(WhisperJob $whisperJob)
+    {
+        if (!$this->ssh->login($this->username, $this->privateKey)) {
+            exit('Login failed');
+        }
+
+        return $this->ssh->exec('conda activate base && nohup /opt/conda/bin/python /home/info/whisper.py ' . $whisperJob->id . ' > /dev/null 2>&1 &');
+    }
+
+    public static function transcribe(WhisperJob $whisperJob)
+    {
+        return app(LocalWhisperService::class)->toTranscribe($whisperJob);
     }
 }

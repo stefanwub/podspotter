@@ -52,7 +52,11 @@ class Episode extends Model
 
         $this->whisperJob()->create([
             'status' => 'queued'
-        ]);      
+        ]);
+        
+        $this->update([
+            'status' => 'queued'
+        ]);
     }
 
     public function createSections()
