@@ -66,14 +66,7 @@ class Episode extends Model
             return;
         }
 
-        if ($this->whisperJob->status !== 'succeeded') {
-            $this->whisperJob->updateStatus();
-            $this->refresh();
-
-            if ($this->whisperJob->status !== 'succeeded') {
-                return;
-            }
-        }
+        if ($this->whisperJob->status !== 'succeeded') return;
 
         if ($this->sections->isNotEmpty()) return;
 
@@ -127,6 +120,10 @@ class Episode extends Model
         $this->update([
             'status' => 'transcribed',
             'transcribed_at' => now()
+        ]);
+
+        $this->whisperJob->update([
+            'status' => 'completed'
         ]);
     }
 

@@ -32,10 +32,10 @@ class CreateEpisodeWhisperJobs extends Command
         if ($this->option('from_published_at')) {
             $query->where('published_at', '>', Carbon::parse($this->option('from_published_at')));
         } else {
-            $query->where('published_at', '>', Carbon::parse('last year'));
+            // $query->where('published_at', '>', Carbon::parse('last year'));
         }
 
-        $episodes = $query->limit($this->option('limit'))->get();
+        $episodes = $query->limit($this->option('limit'))->orderBy('published_at', 'DESC')->get();
 
         foreach ($episodes as $episode) {
             $episode->createWhisperJob();
