@@ -39,7 +39,7 @@ class RunWhisperJobs extends Command
             dispatch(function () use ($server) {
                 $i = 0;
 
-                while($i <= 3) {
+                while($i <= 5) {
 
                     if (
                         ! WhisperJob::whereIn('status', ['running', 'starting'])

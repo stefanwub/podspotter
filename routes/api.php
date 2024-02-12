@@ -59,6 +59,11 @@ Route::get('search-podcast', function (Request $request) {
     return PodcastIndexService::make()->searchByTitle($request->query('q'));
 });
 
+Route::get('podcast-index-categories', function () {
+    return PodcastIndexService::make()->get('/categories/list');
+    //return PodcastIndexService::make()->get('/podcasts/trending', ['lang' => 'nl,nl-nl', 'cat' => 'Culture', 'max' => 1000]);
+});
+
 Route::get('podcast-index', function () {
-    return PodcastIndexService::make()->get('/recent/feeds', ['lang' => 'nl']);
+    return PodcastIndexService::make()->get('/podcasts/trending', ['lang' => 'nl,nl-nl', 'cat' => 'Fitness', 'max' => 1000]);
 });
