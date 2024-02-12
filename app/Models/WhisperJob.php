@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\LocalWhisperService;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,5 +33,24 @@ class WhisperJob extends Model
     public function episode() : BelongsTo
     {
         return $this->belongsTo(Episode::class);
+    }
+
+    public static function transcribeNext($server)
+    {
+        $whisperJob = WhisperJob::where('status', 'queued')->first();
+
+        if ($whisperJob) {
+            $whisperJob->update([
+                'server' => $server,
+                'status' => 'starting'
+            ]);
+
+            $whisperJob->episode?->update([
+                'status' => 'transcribing',
+                'enclosure_url' => strtok($whisperJob->episode->enclosure_url, "?")
+            ]);
+
+            LocalWhisperService::transcribe($whisperJob);
+        }
     }
 }
