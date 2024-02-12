@@ -28,16 +28,18 @@ class RunWhisperJobs extends Command
      */
     public function handle()
     {
+        $totalJobs = 2;
+
         if (Cache::has('pause_whisper_jobs')) return;
 
-        if (WhisperJob::whereIn('status', ['running', 'starting'])->count()) return;
+        if (WhisperJob::whereIn('status', ['running', 'starting'])->count() >= $totalJobs) return;
 
         $servers = [
             '34.32.251.14', // instance-5
             '34.141.245.138' // instance-6
         ];
 
-        $whisperJobs = WhisperJob::where('status', 'queued')->limit(2)->get();
+        $whisperJobs = WhisperJob::where('status', 'queued')->limit($totalJobs)->get();
 
         $index = 0;
 
