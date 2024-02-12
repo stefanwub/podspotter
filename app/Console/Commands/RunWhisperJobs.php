@@ -32,7 +32,7 @@ class RunWhisperJobs extends Command
 
         if (WhisperJob::whereIn('status', ['running', 'starting'])->count()) return;
 
-        $whisperJobs = WhisperJob::where('status', 'queued')->limit(2)->get();
+        $whisperJobs = WhisperJob::where('status', 'queued')->limit(1)->get();
 
         foreach ($whisperJobs as $whisperJob) {
             if ($whisperJob) {
