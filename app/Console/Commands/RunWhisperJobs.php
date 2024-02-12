@@ -35,7 +35,7 @@ class RunWhisperJobs extends Command
             '34.141.245.138' // instance-6
         ];
 
-        foreach ($servers as $server) {
+        foreach ($servers as $index => $server) {
             dispatch(function () use ($server) {
                 $i = 0;
 
@@ -55,7 +55,7 @@ class RunWhisperJobs extends Command
                     $i++;
 
                 }
-            });
+            })->onQueue('whisper-job-check-' . $index );
         } 
     }
 }
