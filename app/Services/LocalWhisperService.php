@@ -9,21 +9,21 @@ use phpseclib3\Net\SSH2;
 
 class LocalWhisperService
 {
-    public function __construct(private $ssh = null, private $username = '', private $privateKey = '')
+    public function __construct(private $ssh = null, private $username = '', private $privateKey = '', private $host = '')
     {
         $username = config('services.ssh.username');
-        $host = config('services.ssh.host');
+        $this->host = config('services.ssh.host');
         $keyPath = config('services.ssh.key_path');
 
         $this->username = $username;
 
         $this->privateKey = PublicKeyLoader::load(file_get_contents($keyPath));
-
-        $this->ssh = new SSH2($host);
     }
 
     protected function getProcesses()
     {
+        $this->ssh = new SSH2($this->host);
+
         if (!$this->ssh->login($this->username, $this->privateKey)) {
             exit('Login failed');
         }
@@ -40,6 +40,8 @@ class LocalWhisperService
 
     protected function toTranscribe(WhisperJob $whisperJob)
     {
+        $this->ssh = new SSH2($whisperJob->server ? $whisperJob->server : $this->host);
+
         if (!$this->ssh->login($this->username, $this->privateKey)) {
             exit('Login failed');
         }

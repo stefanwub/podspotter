@@ -32,11 +32,19 @@ class RunWhisperJobs extends Command
 
         if (WhisperJob::whereIn('status', ['running', 'starting'])->count()) return;
 
-        $whisperJobs = WhisperJob::where('status', 'queued')->limit(1)->get();
+        $servers = [
+            '34.32.251.14', // instance-5
+            '34.141.245.138' // instance-6
+        ];
+
+        $whisperJobs = WhisperJob::where('status', 'queued')->limit(2)->get();
+
+        $index = 0;
 
         foreach ($whisperJobs as $whisperJob) {
             if ($whisperJob) {
                 $whisperJob->update([
+                    'server' => $servers[$index],
                     'status' => 'starting'
                 ]);
 
@@ -47,6 +55,8 @@ class RunWhisperJobs extends Command
 
                 LocalWhisperService::transcribe($whisperJob);
             }
+
+            $index++;
         } 
     }
 }
