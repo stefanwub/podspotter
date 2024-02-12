@@ -32,6 +32,11 @@ class PodcastIndexService
         return app(PodcastIndexService::class);
     }
 
+    public function get($path, $query = [])
+    {
+        return $this->client->get($path, $query)->json();
+    }
+
     public function searchByTitle($title)
     {
         return $this->client->get('/search/bytitle', [

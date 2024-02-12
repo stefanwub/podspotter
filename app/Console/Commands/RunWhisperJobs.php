@@ -32,19 +32,21 @@ class RunWhisperJobs extends Command
 
         if (WhisperJob::whereIn('status', ['running', 'starting'])->count()) return;
 
-        $whisperJob = WhisperJob::where('status', 'queued')->first();
+        $whisperJobs = WhisperJob::where('status', 'queued')->limit(2)->get();
 
-        if ($whisperJob) {
-            $whisperJob->update([
-                'status' => 'starting'
-            ]);
+        foreach ($whisperJobs as $whisperJob) {
+            if ($whisperJob) {
+                $whisperJob->update([
+                    'status' => 'starting'
+                ]);
 
-            $whisperJob->episode?->update([
-                'status' => 'transcribing',
-                'enclosure_url' => strtok($whisperJob->episode->enclosure_url, "?")
-            ]);
+                $whisperJob->episode?->update([
+                    'status' => 'transcribing',
+                    'enclosure_url' => strtok($whisperJob->episode->enclosure_url, "?")
+                ]);
 
-            LocalWhisperService::transcribe($whisperJob);
-        }
+                LocalWhisperService::transcribe($whisperJob);
+            }
+        } 
     }
 }

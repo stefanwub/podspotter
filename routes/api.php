@@ -58,3 +58,7 @@ Route::get('rss-feed', function(Request $request) {
 Route::get('search-podcast', function (Request $request) {
     return PodcastIndexService::make()->searchByTitle($request->query('q'));
 });
+
+Route::get('podcast-index', function () {
+    return PodcastIndexService::make()->get('/recent/feeds', ['lang' => 'nl']);
+});
