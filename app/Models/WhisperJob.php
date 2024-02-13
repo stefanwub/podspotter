@@ -35,13 +35,14 @@ class WhisperJob extends Model
         return $this->belongsTo(Episode::class);
     }
 
-    public static function transcribeNext($server)
+    public static function transcribeNext($server, $gpu)
     {
         $whisperJob = WhisperJob::where('status', 'queued')->first();
 
         if ($whisperJob) {
             $whisperJob->update([
                 'server' => $server,
+                'gpu' => $gpu,
                 'status' => 'starting'
             ]);
 

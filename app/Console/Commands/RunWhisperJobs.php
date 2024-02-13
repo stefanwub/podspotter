@@ -45,7 +45,7 @@ class RunWhisperJobs extends Command
                                 ->where('gpu', $gpu)
                                 ->count()
                         ) {
-                            WhisperJob::transcribeNext($server);
+                            WhisperJob::transcribeNext($server['host'], $gpu);
 
                             break;
                         }
