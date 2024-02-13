@@ -30,32 +30,33 @@ class RunWhisperJobs extends Command
     {
         if (Cache::has('pause_whisper_jobs')) return;
 
-        $servers = [
-            '34.32.251.14', // instance-5
-            '34.141.245.138' // instance-6
-        ];
+        $gpus = config('services.gpus');
 
-        foreach ($servers as $index => $server) {
-            dispatch(function () use ($server) {
-                $i = 0;
+        foreach ($gpus as $instance => $server) {
+            foreach ($server['gpus'] as $gpu) {
+                dispatch(function () use ($server, $gpu) {
+                    $i = 0;
 
-                while($i <= 5) {
+                    while($i <= 5) {
 
-                    if (
-                        ! WhisperJob::whereIn('status', ['running', 'starting'])
-                            ->where('server', $server)
-                            ->count()
-                    ) {
-                        WhisperJob::transcribeNext($server);
+                        if (
+                            ! WhisperJob::whereIn('status', ['running', 'starting'])
+                                ->where('server', $server['host'])
+                                ->where('gpu', $gpu)
+                                ->count()
+                        ) {
+                            WhisperJob::transcribeNext($server);
 
-                        break;
+                            break;
+                        }
+
+                        sleep(10);
+
+                        $i++;
+
                     }
-                    sleep(10);
-
-                    $i++;
-
-                }
-            })->onQueue('whisper-job-check-' . $index );
+                })->onQueue('whisper-job-check-' . $instance . '-' . $gpu );
+            }
         } 
     }
 }

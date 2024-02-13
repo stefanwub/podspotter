@@ -45,7 +45,7 @@ Route::get('scrape', function(Request $request) {
     // https://chartable.com/charts/itunes/nl-all-podcasts-podcasts
     // https://chartable.com/charts/spotify/netherlands-top-podcasts
 
-    return ScrapeChartService::make()->scrapePages('https://chartable.com/charts/itunes/nl-all-podcasts-podcasts');
+    return ScrapeChartService::make()->scrapePages('https://chartable.com/charts/spotify/netherlands-top-podcasts');
 });
 
 Route::get('rss-feed', function(Request $request) {

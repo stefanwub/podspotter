@@ -40,6 +40,21 @@ return [
         'username' => env('SSH_USERNAME'),
         'host' => env('SSH_HOST'),
         'key_path' => env('SSH_KEY_PATH', '/home/forge/podspotter.nl/.ssh/id_rsa')
+    ],
+
+    'gpus' => [
+        'instance-5' => [
+            'host' => '34.32.251.14',
+            'gpus' => [0]
+        ],
+        'instance-6' => [
+            'host' => '34.141.245.138',
+            'gpus' => [0]
+        ],
+        'instance-7' => [
+            'host' => '34.141.175.185',
+            'gpus' => [0,1]
+        ]
     ]
 
 ];
