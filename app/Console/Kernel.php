@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:import-new-episodes')->everyFifteenMinutes();
         $schedule->command('app:run-whisper-jobs')->everyMinute();
         // $schedule->command('app:create-episode-sections')->everyMinute();
-        $schedule->command('app:create-episode-whisper-jobs')->hourly();
+        $schedule->command('app:create-episode-whisper-jobs')->everyTwentySeconds();
     }
 
     /**
