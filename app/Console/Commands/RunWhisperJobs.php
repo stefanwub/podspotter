@@ -55,7 +55,7 @@ class RunWhisperJobs extends Command
                         $i++;
 
                     }
-                })->onQueue($instance . '-' . $gpu );
+                })->onQueue('gpu-' . $instance . '-' . $gpu );
             }
         } 
     }
