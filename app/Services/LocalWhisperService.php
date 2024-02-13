@@ -20,9 +20,9 @@ class LocalWhisperService
         $this->privateKey = PublicKeyLoader::load(file_get_contents($keyPath));
     }
 
-    protected function getProcesses()
+    protected function getProcesses($instance)
     {
-        $this->ssh = new SSH2($this->host);
+        $this->ssh = new SSH2(config('services.gpus.'. $instance  . '.host'));
 
         if (!$this->ssh->login($this->username, $this->privateKey)) {
             exit('Login failed');
@@ -33,9 +33,9 @@ class LocalWhisperService
         return $output;
     }
 
-    public static function processes()
+    public static function processes($instance)
     {
-        return app(LocalWhisperService::class)->getProcesses();
+        return app(LocalWhisperService::class)->getProcesses($instance);
     }
 
     protected function toTranscribe(WhisperJob $whisperJob)

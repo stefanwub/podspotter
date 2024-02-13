@@ -80,8 +80,8 @@ Route::get('envs', function() {
 });
 
 
-Route::get('server-processes', function() {
-    return LocalWhisperService::processes();
+Route::get('server-processes/{instance}', function($instance) {
+    return LocalWhisperService::processes($instance);
 });
 
 require __DIR__.'/auth.php';
