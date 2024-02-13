@@ -46,8 +46,10 @@ class Episode extends Model
 
     public function createWhisperJob()
     {
-        if ($this->whisperJob?->status === 'queued' || $this->whisperJob?->status === 'succeeded') {
-            return;
+        if ($this->whisperJob) {
+            if ($this->whisperJob?->status !== 'failed') {
+                return;
+            }
         }
 
         $this->whisperJob()->create([
