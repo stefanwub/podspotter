@@ -43,10 +43,10 @@ return [
     ],
 
     'gpus' => [
-        'instance-5' => [
-            'host' => '34.32.251.14',
-            'gpus' => [0]
-        ],
+        // 'instance-5' => [
+        //     'host' => '34.32.251.14',
+        //     'gpus' => [0]
+        // ],
         // 'instance-6' => [
         //     'host' => '34.141.245.138',
         //     'gpus' => [0]
@@ -55,6 +55,15 @@ return [
             'host' => '34.141.245.138',
             'gpus' => [0,1,2,3]
         ],
+        'instance-8' => [
+            'host' => '34.172.217.118',
+            'gpus' => [0,1,2,3]
+        ]
+    ],
+
+    'pinecone' => [
+        'host' => env('PINECONE_HOST'),
+        'api_key' => env('PINECONE_API_KEY')
     ]
 
 ];
