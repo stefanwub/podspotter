@@ -116,6 +116,7 @@ class Show extends Model
             $episodeNumber = null;
             $imageUrl = null;
             $duration = null;
+            $durationNumber = 0;
 
             $season = $item->get_item_tags('http://www.itunes.com/dtds/podcast-1.0.dtd', 'season');
             $episode = $item->get_item_tags('http://www.itunes.com/dtds/podcast-1.0.dtd', 'episode');
@@ -139,12 +140,12 @@ class Show extends Model
             }
 
             $this->episodes()->create([
-                'guid' => $item->get_id(),
-                'title' => $item->get_title(),
+                'guid' => Str::limit($item->get_id(), 250),
+                'title' => Str::limit($item->get_title(), 250),
                 'description' => $item->get_description(),
                 'episode' => $episodeNumber,
                 'season' => $seasonNumber,
-                'image_url' => $imageUrl,
+                'image_url' => Str::limit($imageUrl, 250),
                 'duration' => $durationNumber,
                 'enclosure_url' => $item->get_enclosure()->link,
                 'published_at' => Carbon::parse($item->get_date())

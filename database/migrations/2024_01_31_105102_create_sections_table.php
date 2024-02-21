@@ -18,11 +18,8 @@ return new class extends Migration
             $table->integer('start_time')->default(0);
             $table->integer('end_time')->default(0);
             $table->text('content')->nullable();
-            $table->vector('embedding', 1536);
             $table->timestamps();
         });
-
-        DB::statement('CREATE INDEX section_vector_index ON sections USING ivfflat (embedding vector_l2_ops) WITH (lists = 100)');
 
         DB::statement('ALTER TABLE sections ADD searchable tsvector NULL');
         DB::statement('CREATE INDEX sections_searchable_index ON sections USING GIN (searchable)');
@@ -33,8 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP INDEX section_vector_index');
-
         Schema::dropIfExists('sections');
     }
 };

@@ -131,16 +131,15 @@ class Episode extends Model
 
     public function createSection($text, $start, $end)
     {
-        $embedding = OpenAI::embeddings()->create([
-            'model' => 'text-embedding-3-small',
-            'input' => $text
-        ]);
+        // $embedding = OpenAI::embeddings()->create([
+        //     'model' => 'text-embedding-3-small',
+        //     'input' => $text
+        // ]);
 
         $this->sections()->create([
             'content' => $text,
             'start_time' => $start,
-            'end_time' => $end,
-            'embedding' => $embedding->embeddings[0]->embedding
+            'end_time' => $end
         ]); 
     }
 }

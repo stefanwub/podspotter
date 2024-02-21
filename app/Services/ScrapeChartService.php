@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Show;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;

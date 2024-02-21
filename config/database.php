@@ -74,7 +74,7 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'laravel',
+            'search_path' => env('DB_SEARCH_PATH', 'laravel'),
             'sslmode' => 'prefer',
         ],
 
