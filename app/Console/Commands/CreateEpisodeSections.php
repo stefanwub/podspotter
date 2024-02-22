@@ -26,7 +26,7 @@ class CreateEpisodeSections extends Command
      */
     public function handle()
     {
-        $whisperJobs = WhisperJob::where('status', 'succeeded')->limit(10)->get();
+        $whisperJobs = WhisperJob::where('status', 'succeeded')->limit(100)->get();
 
         foreach ($whisperJobs as $whisperJob) {
             dispatch(function () use ($whisperJob) {
