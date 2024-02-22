@@ -31,7 +31,7 @@ class CreateEpisodeSections extends Command
         foreach ($whisperJobs as $whisperJob) {
             dispatch(function () use ($whisperJob) {
                 $whisperJob->episode?->createSections();
-            });
+            })->onQueue('sections');
         }
     }
 }
