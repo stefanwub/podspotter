@@ -70,7 +70,7 @@ class Episode extends Model
 
         if ($this->whisperJob->status !== 'succeeded') return;
 
-        if ($this->sections->isNotEmpty()) return;
+        $this->sections()->delete();
 
         $duration = 0;
         $start = 0;
