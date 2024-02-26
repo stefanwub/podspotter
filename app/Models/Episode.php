@@ -34,6 +34,11 @@ class Episode extends Model
         return $this->hasOne(WhisperJob::class);
     }
 
+    public function whisperJobs() : HasMany
+    {
+        return $this->hasMany(WhisperJob::class);
+    }
+
     public function show() : BelongsTo
     {
         return $this->belongsTo(Show::class);
@@ -62,13 +67,19 @@ class Episode extends Model
     }
 
     public function createSections()
-    {
-        if (! $this->whisperJob) {
-            $this->createWhisperJob();
+    {        
+        $whisperJob = $this->whisperJobs->where('status', 'succeeded')->first();
+
+        if (! $whisperJob) {
+            // $this->createWhisperJob();
             return;
         }
 
-        if ($this->whisperJob->status !== 'succeeded') return;
+        if ($this->whisperJobs->where('status', 'completed')->first()) {
+            $whisperJob->delete();
+
+            return;
+        }
 
         $this->sections()->delete();
 
@@ -79,7 +90,7 @@ class Episode extends Model
 
         $sections = [];
 
-        foreach ($this->whisperJob->chunks as $chunk) {
+        foreach ($whisperJob->chunks as $chunk) {
             $startChunk = round($chunk['timestamp'][0], 3) * 1000;
             $endChunk = round($chunk['timestamp'][1], 3) * 1000;
 
@@ -124,7 +135,7 @@ class Episode extends Model
             'transcribed_at' => now()
         ]);
 
-        $this->whisperJob->update([
+        $whisperJob->update([
             'status' => 'completed'
         ]);
     }
