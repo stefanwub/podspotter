@@ -14,11 +14,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('app:import-new-episodes')->everyFifteenMinutes();
-        $schedule->command('app:run-whisper-jobs')->everyMinute();
-        $schedule->command('app:create-episode-sections')->everyFiveMinutes();
-        $schedule->command('app:create-episode-whisper-jobs')->everyFifteenMinutes();
-        $schedule->job(ImportPodcasts::class)->daily();
+        // $schedule->command('app:import-new-episodes')->everyFifteenMinutes();
+        // $schedule->command('app:run-whisper-jobs')->everyMinute();
+        // $schedule->command('app:create-episode-sections')->everyFiveMinutes();
+        // $schedule->command('app:create-episode-whisper-jobs')->everyFifteenMinutes();
+        // $schedule->job(ImportPodcasts::class)->daily();
     }
 
     /**
