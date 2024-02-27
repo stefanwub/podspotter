@@ -26,7 +26,7 @@ class RemoveEpisode implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->episode->sections()->delete();
+        // $this->episode->sections()->delete();
 
         $this->episode->whisperJobs()->delete();
 
