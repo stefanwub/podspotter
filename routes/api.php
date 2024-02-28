@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Episode;
 use App\Models\Section;
 use App\Services\LocalWhisperService;
 use App\Services\PodcastIndexService;
@@ -66,4 +67,39 @@ Route::get('podcast-index-categories', function () {
 
 Route::get('podcast-index', function () {
     return PodcastIndexService::make()->get('/podcasts/trending', ['lang' => 'nl,nl-nl', 'cat' => 'Fitness', 'max' => 1000]);
+});
+
+Route::get('/search', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->post(config('scout.meilisearch.host') . '/indexes/episodes/search', [
+        'q' => $request->get('q'),
+        'attributesToCrop' => ['sections'],
+        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id'],
+        'attributesToHighlight' => ['sections'],
+        // 'showMatchesPosition' => true,
+        'limit' => 5,
+        'cropLength' => 20
+    ]);
+
+    // $response = Http::withHeaders([
+    //     'X-Meili-API-Key' => config('scout.meilisearch.key'),
+    //     'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    // ])->delete(config('scout.meilisearch.host') . '/indexes/episodes');
+
+    $hits = [];
+
+    foreach ($response->json('hits') as $hit) {
+        $hits[] = [
+            'id' => $hit['id'],
+            'title' => $hit['title'],
+            'show' => $hit['show'],
+            'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
+                return Str::contains($s['t'], '<em>');
+            })->values()
+        ];
+    }
+
+    return $hits;
 });

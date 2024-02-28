@@ -13,7 +13,7 @@ use Pgvector\Laravel\Vector;
 
 class Section extends Model
 {
-    use HasFactory, HasUuids, HasNeighbors, Searchable;
+    use HasFactory, HasUuids, HasNeighbors;
 
     protected $guarded = [];
     

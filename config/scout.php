@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Episode;
+
 return [
 
     /*
@@ -152,6 +154,20 @@ return [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
+            Episode::class => [
+                'filterableAttributes' => ['id', 'show_id', 'categories'],
+                'searchableAttributes' => [
+                    // 'transcription',
+                    'sections.t'
+                ],
+                // 'rankingRules' => [
+                //     "exactness",
+                //     // "words",
+                //     // "typo",
+                //     // "attribute",
+                //     // "sort"
+                // ]
+            ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
