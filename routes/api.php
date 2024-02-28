@@ -112,3 +112,12 @@ Route::get('/search', function (Request $request) {
         'hits' => $hits
     ];
 });
+
+Route::get('/search/stats', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->get(config('scout.meilisearch.host') . '/stats');
+
+    return $response->json();
+});
