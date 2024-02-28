@@ -76,8 +76,8 @@ Route::get('/search', function (Request $request) {
     ])->post(config('scout.meilisearch.host') . '/indexes/episodes/search', [
         'q' => $request->get('q'),
         'attributesToCrop' => ['sections'],
-        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at'],
-        'attributesToHighlight' => ['sections'],
+        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at', 'categories', 'description'],
+        'attributesToHighlight' => ['sections', 'description'],
         // 'showMatchesPosition' => true,
         'limit' => 10,
         'cropLength' => 20
@@ -95,7 +95,9 @@ Route::get('/search', function (Request $request) {
             'id' => $hit['id'],
             'title' => $hit['title'],
             'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
+            'categories' => $hit['categories'],
             'show' => $hit['show'],
+            'description' => $hit['description'],
             'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
                 return Str::contains($s['t'], '<em>');
             })->values()
