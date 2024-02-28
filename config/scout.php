@@ -158,8 +158,7 @@ return [
                 'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at'],
                 'searchableAttributes' => [
                     // 'transcription',
-                    'sections.t',
-                    'description'
+                    'sections.t'
                 ],
                 // 'rankingRules' => [
                 //     "exactness",
