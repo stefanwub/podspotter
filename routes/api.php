@@ -79,7 +79,7 @@ Route::get('/search', function (Request $request) {
         'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at', 'categories', 'description'],
         'attributesToHighlight' => ['sections', 'description'],
         // 'showMatchesPosition' => true,
-        'limit' => 10,
+        'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
         'cropLength' => 20
     ]);
 
@@ -92,15 +92,18 @@ Route::get('/search', function (Request $request) {
 
     foreach ($response->json('hits') as $hit) {
         $hits[] = [
-            'id' => $hit['id'],
-            'title' => $hit['title'],
-            'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
-            'categories' => $hit['categories'],
-            'show' => $hit['show'],
-            'description' => $hit['description'],
-            'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
-                return Str::contains($s['t'], '<em>');
-            })->values()
+            // 'id' => $hit['id'],
+            // 'title' => $hit['title'],
+            // 'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
+            // 'categories' => $hit['categories'],
+            // 'show' => $hit['show'],
+            // 'description' => $hit['description'],
+            ...$hit,
+            '_formatted' => [
+                'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
+                    return Str::contains($s['t'], '<em>');
+                })->values()
+            ]
         ];
     }
 
