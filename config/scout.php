@@ -155,7 +155,7 @@ return [
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
             Episode::class => [
-                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at'],
+                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at', 'medium'],
                 'searchableAttributes' => [
                     'description',
                     'sections.t'
