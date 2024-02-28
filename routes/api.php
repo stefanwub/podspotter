@@ -94,6 +94,7 @@ Route::get('/search', function (Request $request) {
         $hits[] = [
             'id' => $hit['id'],
             'title' => $hit['title'],
+            'published_at' => $hit['published_at'],
             'show' => $hit['show'],
             'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
                 return Str::contains($s['t'], '<em>');
@@ -101,5 +102,8 @@ Route::get('/search', function (Request $request) {
         ];
     }
 
-    return $hits;
+    return [
+        ...$response->json(),
+        'hits' => $hits
+    ];
 });
