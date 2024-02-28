@@ -76,7 +76,7 @@ Route::get('/search', function (Request $request) {
     ])->post(config('scout.meilisearch.host') . '/indexes/episodes/search', [
         'q' => $request->get('q'),
         'attributesToCrop' => ['sections'],
-        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id'],
+        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at'],
         'attributesToHighlight' => ['sections'],
         // 'showMatchesPosition' => true,
         'limit' => 5,
