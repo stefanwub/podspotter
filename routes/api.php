@@ -79,7 +79,7 @@ Route::get('/search', function (Request $request) {
         'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at'],
         'attributesToHighlight' => ['sections'],
         // 'showMatchesPosition' => true,
-        'limit' => 5,
+        'limit' => 10,
         'cropLength' => 20
     ]);
 
@@ -94,7 +94,7 @@ Route::get('/search', function (Request $request) {
         $hits[] = [
             'id' => $hit['id'],
             'title' => $hit['title'],
-            'published_at' => $hit['published_at'],
+            'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
             'show' => $hit['show'],
             'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
                 return Str::contains($s['t'], '<em>');
