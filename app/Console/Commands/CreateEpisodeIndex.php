@@ -30,7 +30,7 @@ class CreateEpisodeIndex extends Command
         $episodes = Episode::whereIn('status', ['transcribing', 'transcribed'])->limit(100)->get();
 
         foreach ($episodes as $episode) {
-            IndexEpisode::dispatch($episode);
+            IndexEpisode::dispatch($episode)->onQueue('episodes');
         }
     }
 }
