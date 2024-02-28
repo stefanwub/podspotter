@@ -57,6 +57,7 @@ class Episode extends Model
             'show_id' => $this->show_id,
             'categories' => $this->show->categories->pluck('id'),
             'published_at' => $this->published_at->timestamp,
+            'enclosure_url' => $this->enclosure_url,
             'show' => [
                 'id' => $this->show?->id,
                 'title' => $this->show?->title,

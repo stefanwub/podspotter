@@ -157,7 +157,7 @@ return [
             Episode::class => [
                 'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at'],
                 'searchableAttributes' => [
-                    // 'transcription',
+                    'description',
                     'sections.t'
                 ],
                 // 'rankingRules' => [
