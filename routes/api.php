@@ -79,6 +79,7 @@ Route::get('/search', function (Request $request) {
         'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at', 'categories', 'description'],
         'attributesToHighlight' => ['sections', 'description'],
         // 'showMatchesPosition' => true,
+        'attributesToSearchOn' => ['sections.t'],
         'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
         'cropLength' => 20
     ]);
