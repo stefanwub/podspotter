@@ -27,7 +27,7 @@ class CreateEpisodeIndex extends Command
      */
     public function handle()
     {
-        $episodes = Episode::whereIn('status', ['transcribing', 'transcribed'])->limit(100)->get();
+        $episodes = Episode::whereIn('status', ['transcribing', 'transcribed'])->orderBy('created_at', 'desc')->limit(100)->get();
 
         foreach ($episodes as $episode) {
             IndexEpisode::dispatch($episode)->onQueue('episodes');
