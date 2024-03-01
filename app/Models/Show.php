@@ -117,6 +117,7 @@ class Show extends Model
     {
         if ($this->medium === 'youtube') {
             $this->importFromYoutubeFeed();
+            return;
         }
 
         $feed = FeedsFacade::make($this->feed_url);
