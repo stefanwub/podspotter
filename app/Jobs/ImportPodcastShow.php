@@ -35,11 +35,11 @@ class ImportPodcastShow implements ShouldQueue
         if ($show) return;
 
         if ($this->podcast['link']) {
-            $show = Show::where('feed_url', $this->podcast['link'])->first();
+            $rssFeed = ScrapeChartService::make()->getRssFeed($this->podcast['link']);
+
+            $show = Show::where('feed_url', $rssFeed)->first();
 
             if ($show) return;
-
-            $rssFeed = ScrapeChartService::make()->getRssFeed($this->podcast['link']);
 
             $show = Show::create([
                 'title' => $this->podcast['title'],
@@ -60,6 +60,10 @@ class ImportPodcastShow implements ShouldQueue
                 if (! in_array($result->language, ['nl', 'nl-nl'])) return;
 
                 $show = Show::where('feed_url', $result->url)->first();
+
+                if ($show) return;
+
+                $show = Show::where('podcast_index_id', $result->id)->first();
 
                 if ($show) return;
 
