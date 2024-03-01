@@ -55,7 +55,7 @@ class Episode extends Model
             'title' => $this->title,
             'description' => strip_tags($this->description),
             'show_id' => $this->show_id,
-            'medium' => 0,
+            'medium' => $this->medium,
             'categories' => $this->show->categories->pluck('id'),
             'published_at' => $this->published_at->timestamp,
             'enclosure_url' => $this->enclosure_url,

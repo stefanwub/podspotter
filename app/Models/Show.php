@@ -42,6 +42,16 @@ class Show extends Model
 
         $feed = FeedsFacade::make($this->feed_url);
 
+        if (Str::contains($this->feed_url, 'youtube.com/feeds/videos.xml')) {
+            $this->update([
+                'title' => htmlspecialchars_decode($feed->get_title()),
+                'language' => 'nl',
+                'medium' => 'youtube'
+            ]);
+
+            return;
+        }
+
         $author = $feed->get_author();
         
         if (! in_array($feed->get_language(), ['nl', 'nl-nl'])) {
@@ -105,6 +115,10 @@ class Show extends Model
 
     public function importEpisodesFromFeed()
     {
+        if ($this->medium === 'youtube') {
+            $this->importFromYoutubeFeed();
+        }
+
         $feed = FeedsFacade::make($this->feed_url);
 
         foreach ($feed->get_items() as $item) {
@@ -145,12 +159,39 @@ class Show extends Model
                 'description' => $item->get_description(),
                 'episode' => $episodeNumber,
                 'season' => $seasonNumber,
+                'medium' => 0,
                 'image_url' => Str::limit($imageUrl, 250),
                 'duration' => $durationNumber,
                 'enclosure_url' => $item->get_enclosure()->link,
                 'published_at' => Carbon::parse($item->get_date())
             ]);
         }
+    }
 
+    public function importFromYoutubeFeed()
+    {
+        $feed = FeedsFacade::make($this->feed_url);
+
+        $mrss_namespace = 'http://search.yahoo.com/mrss/';
+
+        foreach ($feed->get_items() as $item) {
+            if ($this->episodes->where('guid', $item->get_id())->first()) {
+                break;
+            }
+
+            $media_group = $item->get_item_tags($mrss_namespace, 'group');
+            $media_description = $media_group[0]['child'][$mrss_namespace]['description'][0]['data'];
+            $media_thumbnail = $media_group[0]['child'][$mrss_namespace]['thumbnail'][0]['attribs']['']['url'];
+
+            $this->episodes()->create([
+                'guid' => Str::limit($item->get_id(), 250),
+                'title' => Str::limit($item->get_title(), 250),
+                'description' => $media_description,
+                'medium' => 1,
+                'image_url' => $media_thumbnail,
+                'enclosure_url' => $item->get_enclosure()->link,
+                'published_at' => Carbon::parse($item->get_date())
+            ]);
+        }
     }
 }
