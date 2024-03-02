@@ -27,48 +27,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('search', function(Request $request) {
-    return Section::search($request->get('q'))
-        ->usingWebSearchQuery()->get();
-});
-
-Route::get('semantic-search', function(Request $request) {
-    $embedding = OpenAI::embeddings()->create([
-        'model' => 'text-embedding-3-small',
-        'input' => $request->get('q')
-    ]);
-
-    return Section::query()->nearestNeighbors('embedding', $embedding->embeddings[0]->embedding, Distance::L2)->take(5)->get();
-});
-
-
-Route::get('scrape', function(Request $request) {
-    // https://chartable.com/charts/itunes/nl-all-podcasts-podcasts
-    // https://chartable.com/charts/spotify/netherlands-top-podcasts
-
-    return ScrapeChartService::make()->scrapePages('https://chartable.com/charts/itunes/nl-all-podcasts-podcasts');
-});
-
-Route::get('rss-feed', function(Request $request) {
-    // https://chartable.com/charts/itunes/nl-all-podcasts-podcasts
-    // https://chartable.com/charts/spotify/netherlands-top-podcasts
-
-    return ScrapeChartService::make()->getRssFeed($request->query('q'));
-});
-
-Route::get('search-podcast', function (Request $request) {
-    return PodcastIndexService::make()->searchByTitle($request->query('q'));
-});
-
-Route::get('podcast-index-categories', function () {
-    return PodcastIndexService::make()->get('/categories/list');
-    //return PodcastIndexService::make()->get('/podcasts/trending', ['lang' => 'nl,nl-nl', 'cat' => 'Culture', 'max' => 1000]);
-});
-
-Route::get('podcast-index', function () {
-    return PodcastIndexService::make()->get('/podcasts/trending', ['lang' => 'nl,nl-nl', 'cat' => 'Fitness', 'max' => 1000]);
-});
-
 Route::get('/search', function (Request $request) {
     $response = Http::withHeaders([
         'X-Meili-API-Key' => config('scout.meilisearch.key'),
