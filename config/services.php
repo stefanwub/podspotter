@@ -39,7 +39,7 @@ return [
     'ssh' => [
         'username' => env('SSH_USERNAME'),
         'host' => env('SSH_HOST'),
-        'key_path' => env('SSH_KEY_PATH', '/home/forge/.ssh/id_rsa')
+        'key_path' => env('SSH_KEY_PATH', '/home/forge/podspotter.nl/.ssh/id_rsa')
     ],
 
     'gpus' => [
