@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Episode;
+use App\Models\Show;
 
 return [
 
@@ -167,7 +168,14 @@ return [
                 //     // "attribute",
                 //     // "sort"
                 // ]
-            ]
+                ],
+                Show::class => [
+                    'filterableAttributes' => ['id', 'categories', 'medium'],
+                    'searchableAttributes' => [
+                        'title',
+                        'description'
+                    ],
+                ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
