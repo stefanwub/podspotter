@@ -8,14 +8,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 use Str;
 use willvincent\Feeds\Facades\FeedsFacade;
 
 class Show extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids; // Searchable
 
     protected $guarded = [];
+
+    // public function toSearchableArray()
+    // {
+    //     return [
+    //         'id' => $this->id,
+    //         'title' => $this->title,
+    //         'description' => $this->description,
+    //         'image_url' => $this->image_url,
+    //         'medium' => $this->medium,
+    //         'categories' => $this->categories->pluck('id')
+    //     ];
+    // }
 
     public function categories() : BelongsToMany
     {
