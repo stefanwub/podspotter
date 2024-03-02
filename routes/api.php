@@ -72,6 +72,24 @@ Route::get('/search', function (Request $request) {
     ];
 });
 
+Route::get('/search/shows', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->post(config('scout.meilisearch.host') . '/indexes/shows/search', [
+        'q' => $request->get('q'),
+        'attributesToCrop' => ['title', 'description'],
+        'attributesToRetrieve' => ['_formatted', 'title', 'id', 'published_at', 'categories', 'description', 'image_url'],
+        'attributesToHighlight' => ['title', 'description'],
+        // 'showMatchesPosition' => true,
+        'attributesToSearchOn' => ['title'],
+        'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
+        'cropLength' => 20
+    ]);
+
+    return $response->json();
+});
+
 Route::get('/search/stats', function (Request $request) {
     $response = Http::withHeaders([
         'X-Meili-API-Key' => config('scout.meilisearch.key'),
