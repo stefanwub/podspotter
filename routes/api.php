@@ -100,14 +100,14 @@ Route::apiResource('categories', CategoryController::class);
 //     return $response->json();
 // });
 
-// Route::get('/search/stats', function (Request $request) {
-//     $response = Http::withHeaders([
-//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
-//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-//     ])->get(config('scout.meilisearch.host') . '/stats');
+Route::get('/search/stats', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->get(config('scout.meilisearch.host') . '/stats');
 
-//     return $response->json();
-// });
+    return $response->json();
+});
 
 // Route::get('/podcast-index', function (Request $request) {
 //     return PodcastIndexService::make()->get('podcasts/trending', [
