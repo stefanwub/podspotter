@@ -104,7 +104,7 @@ class GpuController extends Controller
             'status' => 'deleting'
         ]);
 
-        DeleteGpuInstance::dispatch($gpu);
+        DeleteGpuInstance::dispatch($gpu)->onQueue('gpus');
 
         $gpu->instance = $gpu->getInstance();
 

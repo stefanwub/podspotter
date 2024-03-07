@@ -26,20 +26,20 @@ class Gpu extends Model
     protected static function booted()
     {
         self::created(function (Gpu $gpu): void {
-            CreateGpuInstance::dispatch($gpu);
+            CreateGpuInstance::dispatch($gpu)->onQueue('gpus');
         });
 
         self::saved(function (Gpu $gpu): void {
             if ($gpu->status === 'terminated' && $gpu->getOriginal('status') !== 'terminated') {
-                RestartGpuInstance::dispatch($gpu);
+                RestartGpuInstance::dispatch($gpu)->onQueue('gpus');
             }
 
             if ($gpu->status === 'stopping' && $gpu->getOriginal('status') !== 'stopping') {
-               StopGpuInstance::dispatch($gpu);
+               StopGpuInstance::dispatch($gpu)->onQueue('gpus');
             }
 
             if ($gpu->status === 'starting' && $gpu->getOriginal('status') !== 'starting') {
-               StartGpuInstance::dispatch($gpu);
+               StartGpuInstance::dispatch($gpu)->onQueue('gpus');
             }
         });
     }
