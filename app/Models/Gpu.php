@@ -52,8 +52,8 @@ class Gpu extends Model
 
     public function markGpuAsTerminated()
     {
-        $this->gpu->status = 'terminated';
-        $this->gpu->save();
+        $this->status = 'terminated';
+        $this->save();
     }
 
     public function createInstance()
