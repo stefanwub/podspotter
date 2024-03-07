@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Gpu;
+use Bus;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,6 +29,11 @@ class StopGpuInstance implements ShouldQueue
     public function handle(): void
     {
         if ($this->gpu->status !== 'stopping') return;
+
+        if ($this->gpu->batch_id) {
+            $batch = Bus::findBatch($this->gpu->batch_id);
+            $batch->cancel();
+        }
 
         $operationResponse = $this->gpu->stopInstance();
 
