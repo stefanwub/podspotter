@@ -54,6 +54,10 @@ class RunWhisperJobOnGpu implements ShouldQueue
         try {
             if (! $this->gpu->instanceIsRunning()) {
                 $this->batch()->cancel();
+                $this->whisperJob->update([
+                    'gpu_id' => null,
+                    'status' => 'queued'
+                ]);
                 $this->gpu->markGpuAsTerminated();
                 return;
             }
