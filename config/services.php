@@ -43,18 +43,18 @@ return [
     ],
 
     'gpus' => [
-        'instance-5' => [
-            'host' => '34.170.77.202',
-            'gpus' => [0]
-        ],
-        'instance-6' => [
-            'host' => '34.68.89.76',
-            'gpus' => [0]
-        ],
-        'instance-7' => [
-            'host' => '35.226.44.62',
-            'gpus' => [0]
-        ],
+        // 'instance-5' => [
+        //     'host' => '34.170.77.202',
+        //     'gpus' => [0]
+        // ],
+        // 'instance-6' => [
+        //     'host' => '34.68.89.76',
+        //     'gpus' => [0]
+        // ],
+        // 'instance-7' => [
+        //     'host' => '35.226.44.62',
+        //     'gpus' => [0]
+        // ],
         'instance-8' => [
             'host' => '34.90.34.14',
             'gpus' => [0]
@@ -64,6 +64,10 @@ return [
     'pinecone' => [
         'host' => env('PINECONE_HOST'),
         'api_key' => env('PINECONE_API_KEY')
+    ],
+
+    'google_cloud' => [
+        'project' => env('GOOGLE_CLOUD_PROJECT')
     ]
 
 ];
