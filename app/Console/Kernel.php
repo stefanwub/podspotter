@@ -15,12 +15,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('app:import-new-episodes')->everyFifteenMinutes();
-        $schedule->command('app:run-whisper-jobs')->everyMinute();
+        // $schedule->command('app:run-whisper-jobs')->everyMinute();
         // $schedule->command('app:create-episode-sections')->everyFiveMinutes();
         $schedule->command('app:create-episode-whisper-jobs')->everyFifteenMinutes();
         $schedule->job(ImportPodcasts::class)->daily();
 
         $schedule->command('app:create-episode-index')->everyMinute();
+
+        $schedule->command('app:add-whisper-jobs-to-gpus')->everyMinute();
+
+        $schedule->command('queue:prune-batches')->daily();
     }
 
     /**

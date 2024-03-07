@@ -1,18 +1,21 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GpuController;
 use App\Http\Controllers\PerformSearchController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SearchResultController;
 use App\Http\Controllers\UpdateSearchAlertController;
 use App\Http\Resources\UserResource;
 use App\Services\PodcastIndexService;
+use Google\Cloud\Compute\V1\InstancesClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use OpenAI\Laravel\Facades\OpenAI;
 use Pgvector\Laravel\Distance;
 use phpseclib3\Net\SSH2;
 use phpseclib3\Crypt\PublicKeyLoader;
+use Google\Cloud\Compute\V1\Instance;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,8 @@ Route::put('/searches/{search}/update-alerts', UpdateSearchAlertController::clas
 Route::post('/teams/{team}/perform-search', PerformSearchController::class)->name('team.perform-search');
 
 Route::apiResource('categories', CategoryController::class);
+
+Route::apiResource('gpus', GpuController::class);
 
 // Route::get('/search', function (Request $request) {
 //     $response = Http::withHeaders([
@@ -126,4 +131,69 @@ Route::get('/search/stats', function (Request $request) {
 //     return PodcastIndexService::make()->get("search/bytitle", [
 //         'q' => $request->query('q')
 //     ]);
+// });
+
+// Route::get('/google-instances', function () {
+//     $instances = new InstancesClient();
+//     $array = [];
+//     foreach ($instances->list('my-project-1496764198259', 'us-central1-a') as $instance) {
+//         $ip = null;
+
+//         foreach ($instance->getNetworkInterfaces() as $interface) {
+//             foreach ($interface->getAccessConfigs() as $config) {
+//                 $ip = $config->getNatIP();
+//             }
+//         }
+
+//         $array[] = [
+//             'name' => $instance->getName(),
+//             'status' => $instance->getStatus(),
+//             'ip' => $ip,
+//             'zone' => $instance->getZone()
+//         ];
+//     }
+
+//     return $array;
+
+//     // $instance = $instances->get('instance-20240306-222216', 'my-project-1496764198259', 'us-central1-a');
+
+//     // $interfaces = [];
+
+//     // foreach ($instance->getNetworkInterfaces() as $interface) {
+//     //     $interfaces[] = $interface->getAccessConfigs()[0]->getNatIP();
+//     // }
+
+//     // return [
+//     //     'name' => $instance->getName(),
+//     //     'status' => $instance->getStatus(),
+//     //     'network' => $interfaces
+//     // ];
+// });
+
+
+// Route::get('/create-google-instance', function () {
+// $instancesClient = new InstancesClient();
+// $instance = (new Instance())
+//     ->setName('transcribe-gpu-1')
+//     ->setSourceMachineImage('projects/my-project-1496764198259/global/machineImages/whisper-spot-image-t4-1gpu');
+
+// $operationResponse = $instancesClient->insert($instance, 'my-project-1496764198259', 'us-central1-a');
+// $operationResponse->pollUntilComplete();
+
+// if ($operationResponse->operationSucceeded()) {
+//     return 'Instance created successfully.';
+// } else {
+//     $error = $operationResponse->getError();
+//     return 'Instance creation failed: ' . $error->getMessage();
+// }
+// });
+
+// Route::get('/stop-google-instance', function () {
+//     $instancesClient = new InstancesClient();
+//     $instancesClient->stop('testname', 'my-project-1496764198259', 'us-central1-a');
+// });
+
+// Route::get('/delete-google-instance', function () {
+//     $instancesClient = new InstancesClient();
+//     $instancesClient->delete('testname', 'my-project-1496764198259', 'us-central1-a');
 // });

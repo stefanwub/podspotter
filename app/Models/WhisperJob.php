@@ -54,4 +54,9 @@ class WhisperJob extends Model
             LocalWhisperService::transcribe($whisperJob);
         }
     }
+
+    public function serverGpu() : BelongsTo
+    {
+        return $this->belongsTo(Gpu::class, 'gpu_id');
+    }
 }

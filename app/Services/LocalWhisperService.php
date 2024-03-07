@@ -49,8 +49,26 @@ class LocalWhisperService
         return $this->ssh->exec('export PATH="/usr/local/cuda/bin:/opt/conda/bin:/opt/conda/condabin:${PATH}" && nohup /opt/conda/bin/python /home/info/whisper.py ' . $whisperJob->id . ' > /dev/null 2>&1 &');
     }
 
+    protected function toTranscribeOnGpu(WhisperJob $whisperJob)
+    {
+        $this->ssh = new SSH2($whisperJob->serverGpu?->ip);
+
+        if (!$this->ssh->login($this->username, $this->privateKey)) {
+            exit('Login failed');
+        }
+
+        $this->ssh->setTimeout(700);
+
+        return $this->ssh->exec('export PATH="/usr/local/cuda/bin:/opt/conda/bin:/opt/conda/condabin:${PATH}" && /opt/conda/bin/python /home/info/whisper.py ' . $whisperJob->id . ' > /dev/null 2>&1 &');
+    }
+
     public static function transcribe(WhisperJob $whisperJob)
     {
         return app(LocalWhisperService::class)->toTranscribe($whisperJob);
+    }
+
+    public static function transcribeOnGpu(WhisperJob $whisperJob)
+    {
+        return app(LocalWhisperService::class)->toTranscribeOnGpu($whisperJob);
     }
 }
