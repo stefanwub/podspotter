@@ -40,6 +40,13 @@ class Show extends Model
         return $this->hasMany(Episode::class);
     }
 
+    public function searches() : BelongsToMany
+    {
+        return $this->belongsToMany(Search::class)
+            ->withTimestamps()
+            ->withPivot('include');
+    }
+
     public function get_categories()
     {
         $feed = FeedsFacade::make($this->feed_url);

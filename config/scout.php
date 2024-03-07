@@ -156,11 +156,15 @@ return [
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
             Episode::class => [
-                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at', 'medium'],
+                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at', 'indexed_at', 'medium'],
                 'searchableAttributes' => [
                     'description',
                     'sections.t'
                 ],
+                'sortableAttributes' => [
+                    'published_at',
+                    'indexed_at'
+                ]
                 // 'rankingRules' => [
                 //     "exactness",
                 //     // "words",

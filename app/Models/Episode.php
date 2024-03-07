@@ -21,13 +21,20 @@ class Episode extends Model
 
     protected $casts = [
         'transcribed_at' => 'datetime',
-        'published_at' => 'datetime'
+        'published_at' => 'datetime',
+        'indexed_at' => 'datetime'
     ];
 
     protected static function booted()
     {
         self::creating(function (Episode $episode): void {
             $episode->status = 'imported';
+        });
+
+        self::saving(function (Episode $episode): void {
+            if ($episode->status === 'indexed' && $episode->getOriginal('status') !== 'indexed') {
+                $episode->indexed_at = now();
+            }
         });
     }
 
@@ -58,6 +65,7 @@ class Episode extends Model
             'medium' => $this->medium,
             'categories' => $this->show->categories->pluck('id'),
             'published_at' => $this->published_at->timestamp,
+            'indexed_at' => $this->indexed_at ? $this->indexed_at->timestamp : $this->published_at->timestamp,
             'enclosure_url' => $this->enclosure_url,
             'show' => [
                 'id' => $this->show?->id,

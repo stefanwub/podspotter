@@ -19,4 +19,9 @@ class Category extends Model
     {
         return $this->belongsToMany(Show::class);
     }
+
+    public function searches() : BelongsToMany
+    {
+        return $this->belongsToMany(Search::class);
+    }
 }

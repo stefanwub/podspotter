@@ -1,10 +1,12 @@
 <?php
 
-use App\Models\Episode;
-use App\Models\Section;
-use App\Services\LocalWhisperService;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PerformSearchController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SearchResultController;
+use App\Http\Controllers\UpdateSearchAlertController;
+use App\Http\Resources\UserResource;
 use App\Services\PodcastIndexService;
-use App\Services\ScrapeChartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -23,78 +25,105 @@ use phpseclib3\Crypt\PublicKeyLoader;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/users/me', function (Request $request) {
+    return new UserResource($request->user());
 });
 
-Route::get('/search', function (Request $request) {
-    $response = Http::withHeaders([
-        'X-Meili-API-Key' => config('scout.meilisearch.key'),
-        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-    ])->post(config('scout.meilisearch.host') . '/indexes/episodes/search', [
-        'q' => $request->get('q'),
-        'attributesToCrop' => ['sections', 'description'],
-        'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at', 'categories', 'description', 'enclosure_url'],
-        'attributesToHighlight' => ['sections', 'description'],
-        // 'showMatchesPosition' => true,
-        'attributesToSearchOn' => ['sections.t'],
-        'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
-        'cropLength' => 20
-    ]);
+Route::apiResource('teams.searches', SearchController::class);
+Route::apiResource('searches.results', SearchResultController::class)->except('update');
+Route::put('/searches/{search}/update-alerts', UpdateSearchAlertController::class)->name('search.update-alerts');
 
-    // $response = Http::withHeaders([
-    //     'X-Meili-API-Key' => config('scout.meilisearch.key'),
-    //     'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-    // ])->delete(config('scout.meilisearch.host') . '/indexes/episodes');
+Route::post('/teams/{team}/perform-search', PerformSearchController::class)->name('team.perform-search');
 
-    $hits = [];
+Route::apiResource('categories', CategoryController::class);
 
-    foreach ($response->json('hits') as $hit) {
-        $hits[] = [
-            // 'id' => $hit['id'],
-            // 'title' => $hit['title'],
-            // 'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
-            // 'categories' => $hit['categories'],
-            // 'show' => $hit['show'],
-            // 'description' => $hit['description'],
-            ...$hit,
-            '_formatted' => [
-                'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
-                    return Str::contains($s['t'], '<em>');
-                })->values()
-            ]
-        ];
-    }
+// Route::get('/search', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->post(config('scout.meilisearch.host') . '/indexes/episodes/search', [
+//         'q' => $request->get('q'),
+//         'attributesToCrop' => ['sections', 'description'],
+//         'attributesToRetrieve' => ['_formatted', 'show', 'title', 'id', 'published_at', 'categories', 'description', 'enclosure_url'],
+//         'attributesToHighlight' => ['sections', 'description'],
+//         // 'showMatchesPosition' => true,
+//         'attributesToSearchOn' => ['sections.t'],
+//         'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
+//         'cropLength' => 20
+//     ]);
 
-    return [
-        ...$response->json(),
-        'hits' => $hits
-    ];
-});
+//     // $response = Http::withHeaders([
+//     //     'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//     //     'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     // ])->delete(config('scout.meilisearch.host') . '/indexes/episodes');
 
-Route::get('/search/shows', function (Request $request) {
-    $response = Http::withHeaders([
-        'X-Meili-API-Key' => config('scout.meilisearch.key'),
-        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-    ])->post(config('scout.meilisearch.host') . '/indexes/shows/search', [
-        'q' => $request->get('q'),
-        'attributesToCrop' => ['title', 'description'],
-        'attributesToRetrieve' => ['_formatted', 'title', 'id', 'published_at', 'categories', 'description', 'image_url'],
-        'attributesToHighlight' => ['title', 'description'],
-        // 'showMatchesPosition' => true,
-        'attributesToSearchOn' => ['title'],
-        'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
-        'cropLength' => 20
-    ]);
+//     $hits = [];
 
-    return $response->json();
-});
+//     foreach ($response->json('hits') as $hit) {
+//         $hits[] = [
+//             // 'id' => $hit['id'],
+//             // 'title' => $hit['title'],
+//             // 'published_at' => isset($hit['published_at']) ? $hit['published_at'] : null,
+//             // 'categories' => $hit['categories'],
+//             // 'show' => $hit['show'],
+//             // 'description' => $hit['description'],
+//             ...$hit,
+//             '_formatted' => [
+//                 'sections' => collect($hit['_formatted']['sections'])->filter(function ($s) {
+//                     return Str::contains($s['t'], '<em>');
+//                 })->values()
+//             ]
+//         ];
+//     }
 
-Route::get('/search/stats', function (Request $request) {
-    $response = Http::withHeaders([
-        'X-Meili-API-Key' => config('scout.meilisearch.key'),
-        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-    ])->get(config('scout.meilisearch.host') . '/stats');
+//     return [
+//         ...$response->json(),
+//         'hits' => $hits
+//     ];
+// });
 
-    return $response->json();
-});
+// Route::get('/search/shows', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->post(config('scout.meilisearch.host') . '/indexes/shows/search', [
+//         'q' => $request->get('q'),
+//         'attributesToCrop' => ['title', 'description'],
+//         'attributesToRetrieve' => ['_formatted', 'title', 'id', 'published_at', 'categories', 'description', 'image_url'],
+//         'attributesToHighlight' => ['title', 'description'],
+//         // 'showMatchesPosition' => true,
+//         'attributesToSearchOn' => ['title'],
+//         'limit' => $request->query('limit') ? intval($request->query('limit')) : 10,
+//         'cropLength' => 20
+//     ]);
+
+//     return $response->json();
+// });
+
+// Route::get('/search/stats', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->get(config('scout.meilisearch.host') . '/stats');
+
+//     return $response->json();
+// });
+
+// Route::get('/podcast-index', function (Request $request) {
+//     return PodcastIndexService::make()->get('podcasts/trending', [
+//         'lang' => 'nl',
+//         'max' => 1000
+//     ]);
+// });
+
+// Route::get('/podcast-index/podcasts/{feedId}', function ($feedId, Request $request) {
+//     return PodcastIndexService::make()->get("podcasts/byfeedid", [
+//         'id' => $feedId
+//     ]);
+// });
+
+// Route::get('/podcast-index/search', function (Request $request) {
+//     return PodcastIndexService::make()->get("search/bytitle", [
+//         'q' => $request->query('q')
+//     ]);
+// });
