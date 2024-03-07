@@ -76,9 +76,10 @@ class RunWhisperJobOnGpu implements ShouldQueue
             LocalWhisperService::transcribeOnGpu($this->whisperJob);
         } catch(Exception $e) {
             $this->whisperJob->update([
-                'status' => 'failed',
-                'error_message' => $e->getMessage()
+                'gpu_id' => null,
+                'status' => 'queued'
             ]);
+            throw new Exception($e->getMessage());
         }
 
         $this->whisperJob->refresh();
