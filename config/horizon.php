@@ -194,6 +194,20 @@ return [
             'nice' => 0,
         ],
 
+        'supervisor-for-episodes' => [
+            'connection' => 'redis',
+            'queue' => ['episodes'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
+
         'supervisor-gpu-1' => [
             'connection' => 'redis',
             'queue' => ['gpu-1'],
@@ -338,7 +352,7 @@ return [
     'environments' => [
         'production' => [
             'supervisor-1' => [
-                'maxProcesses' => 10,
+                'maxProcesses' => 3,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
