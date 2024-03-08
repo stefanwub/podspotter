@@ -33,7 +33,7 @@ class RestartGpuInstance implements ShouldQueue
             'status' => 'restarting'
         ]);
 
-        sleep(120);
+        sleep(60);
 
         $operationResponse = $this->gpu->startInstance();
 

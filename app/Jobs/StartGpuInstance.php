@@ -27,7 +27,7 @@ class StartGpuInstance implements ShouldQueue
      */
     public function handle(): void
     {
-        if ($this->gpu->status !== 'starting') return;
+        if ($this->gpu->status !== 'starting' || ($this->gpu->status === 'start_failed' && $this->failedStatus !== 'start_failed')) return;
 
         $operationResponse = $this->gpu->startInstance();
 
