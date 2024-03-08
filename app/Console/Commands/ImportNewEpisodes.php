@@ -28,7 +28,7 @@ class ImportNewEpisodes extends Command
     public function handle()
     {
         foreach (Show::all() as $show) {
-            ImportShowEpisodes::dispatch($show);
+            ImportShowEpisodes::dispatch($show)->onQueue('import-episodes');
         }
     }
 }
