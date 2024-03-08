@@ -17,7 +17,7 @@ class StartGpuInstance implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected Gpu $gpu)
+    public function __construct(protected Gpu $gpu, protected $failedStatus = 'start_failed')
     {
         //
     }
@@ -43,7 +43,7 @@ class StartGpuInstance implements ShouldQueue
         } else {
             $error = $operationResponse->getError();
             $this->gpu->update([
-                'status' => 'start_failed',
+                'status' => $this->failedStatus,
                 'error_message' => $error->getMessage()
             ]);
 

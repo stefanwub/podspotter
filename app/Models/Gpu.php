@@ -41,6 +41,14 @@ class Gpu extends Model
             if ($gpu->status === 'starting' && $gpu->getOriginal('status') !== 'starting') {
                StartGpuInstance::dispatch($gpu)->onQueue('gpus');
             }
+
+            if ($gpu->status === 'restart_failed' && $gpu->getOriginal('status') !== 'restart_failed') {
+               StartGpuInstance::dispatch($gpu)->onQueue('gpus')->delay(30);
+            }
+
+            if ($gpu->status === 'start_failed' && $gpu->getOriginal('status') !== 'start_failed') {
+                StartGpuInstance::dispatch($gpu, 'start_failed_again')->onQueue('gpus')->delay(30);
+            }
         });
     }
 
