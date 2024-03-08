@@ -13,7 +13,8 @@ class GoogleCloudComputeService
     protected $client;
 
     public $zones = [
-        'us-central1-a'
+        'us-central1-a',
+        'europe-west4-a'
     ];
 
     public $images = [
