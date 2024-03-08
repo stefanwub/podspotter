@@ -113,17 +113,17 @@ class Gpu extends Model
             // All jobs completed successfully...
         })->catch(function (Batch $batch, Throwable $e) {
             // First batch job failure detected...
-            $gpu = Gpu::where('batch_id', $batch->id)->first();
+            $gpu = Gpu::where('name', $batch->name)->first();
 
             if ($gpu) {
-                $gpu->whisperJobs()->whereIn('status', ['batched', 'running'])->update([
+                $gpu->whisperJobs()->whereIn('status', ['batched', 'running', 'starting'])->update([
                     'gpu_id' => null,
                     'status' => 'queued'
                 ]);
             }
         })->finally(function (Batch $batch) {
             // The batch has finished executing...
-        })->onQueue($this->queue)->dispatch();
+        })->name($this->name)->onQueue($this->queue)->dispatch();
 
         $this->current_job_batch_id = $batch->id;
         $this->save();
