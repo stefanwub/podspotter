@@ -39,7 +39,7 @@ class GpuController extends Controller
             ],
             'machine_image' => [
                 'required',
-                'in:transcribe-t1-1gpu'
+                'in:transcribe-t1-1gpu,transcribe-t4-1-gpu-europe'
             ],
             'queue' => [
                 'required',
