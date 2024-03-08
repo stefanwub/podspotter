@@ -31,7 +31,7 @@ class WhisperJobController extends Controller
             // ]
         ]);
 
-        $query = WhisperJob::with('episode', 'episode.show', 'serverGpu')->orderBy($request->get('order_by') ?? 'updated_at', 'desc');
+        $query = WhisperJob::with('episode', 'episode.show', 'serverGpu')->orderBy($request->get('order_by', 'desc') ?? 'updated_at', 'desc');
 
         if ($request->get('status')) {
             $query = $query->whereIn('status', explode(',', $request->get('status')));
