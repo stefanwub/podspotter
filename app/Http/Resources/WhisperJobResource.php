@@ -20,6 +20,7 @@ class WhisperJobResource extends JsonResource
             'execution_time' => $this->execution_time,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'error_message' => $this->error_message,
             'gpu' => $this->serverGpu ? [
                 'name' => $this->serverGpu?->name,
                 'id' => $this->serverGpu?->id
