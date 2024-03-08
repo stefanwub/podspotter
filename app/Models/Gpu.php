@@ -116,7 +116,7 @@ class Gpu extends Model
             $gpu = Gpu::where('batch_id', $batch->id)->first();
 
             if ($gpu) {
-                $gpu->whisperJobs()->where('status', 'batched')->update([
+                $gpu->whisperJobs()->whereIn('status', ['batched', 'running'])->update([
                     'gpu_id' => null,
                     'status' => 'queued'
                 ]);
