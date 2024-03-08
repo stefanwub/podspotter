@@ -6,6 +6,7 @@ use App\Http\Controllers\PerformSearchController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SearchResultController;
 use App\Http\Controllers\UpdateSearchAlertController;
+use App\Http\Controllers\WhisperJobController;
 use App\Http\Resources\UserResource;
 use App\Services\PodcastIndexService;
 use Google\Cloud\Compute\V1\InstancesClient;
@@ -41,6 +42,7 @@ Route::post('/teams/{team}/perform-search', PerformSearchController::class)->nam
 Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('gpus', GpuController::class);
+Route::apiResource('whisper-jobs', WhisperJobController::class)->only('index', 'show');
 
 // Route::get('/search', function (Request $request) {
 //     $response = Http::withHeaders([
