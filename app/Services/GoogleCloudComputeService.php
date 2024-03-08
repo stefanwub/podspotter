@@ -19,7 +19,7 @@ class GoogleCloudComputeService
 
     public $images = [
         'transcribe-t1-1gpu' => 'us-central1-a',
-        'transcribe-t4-1-gpu-europe' => 'europe-west4-a'
+        'transcribe-t4-1-gpu-eu-new' => 'europe-west4-a'
     ];
 
     public function __construct()
