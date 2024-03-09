@@ -77,13 +77,13 @@ class PerformSearchController extends Controller
 
         if (count($request->get('exclude_shows'))) {
             $filter[] = collect($request->get('exclude_shows'))->map(function ($category) {
-                return "shows != " . $category;
+                return "show_id != " . $category;
             })->values()->toArray();
         }
     
         if (count($request->get('include_shows'))) {
             $filter[] = collect($request->get('include_shows'))->map(function ($category) {
-                return "shows = " . $category;
+                return "show_id = " . $category;
             })->values()->toArray();
         }
 
