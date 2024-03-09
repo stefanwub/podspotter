@@ -26,6 +26,7 @@ class Show extends Model
             'description' => $this->description,
             'image_url' => $this->image_url,
             'medium' => $this->medium,
+            'ranking' => $this->ranking ?? 0,
             'categories' => $this->categories->pluck('id')
         ];
     }

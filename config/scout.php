@@ -162,13 +162,14 @@ return [
                     'sections.t'
                 ],
                 'sortableAttributes' => ['created_at', 'published_at', 'indexed_at'],
-                // 'rankingRules' => [
-                //     "exactness",
-                //     // "words",
-                //     // "typo",
-                //     // "attribute",
-                //     // "sort"
-                // ]
+                'rankingRules' => [
+                    "sort",
+                    "words",
+                    "typo",
+                    "proximity",
+                    "attribute",
+                    "exactness"
+                ]
             ],
             Show::class => [
                 'filterableAttributes' => ['id', 'categories', 'medium'],
