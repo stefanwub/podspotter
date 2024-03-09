@@ -95,16 +95,18 @@ class RunWhisperJobOnGpu implements ShouldQueue
         if ($this->whisperJob->status === 'failed') {
             if ($this->whisperJob->error_message === 'No CUDA GPUs are available') {
                 $this->batch()->cancel();
-                
+
                 $this->whisperJob->update([
                     'gpu_id' => null,
                     'status' => 'queued'
                 ]); 
                 
                 $this->gpu->update([
-                    'status' => 'stopping',
-                    'error_message' => 'No CUDA GPUs are available'
+                    'status' => 'failed',
+                    'error_message' => 'No CUDA GPUs are available, recreation started'
                 ]);
+
+                RecreateGpuInstance::dispatch($this->gpu);
             }
         }
 
