@@ -74,7 +74,7 @@ class Show extends Model
 
         $author = $feed->get_author();
         
-        if (! in_array($feed->get_language(), ['nl', 'nl-nl'])) {
+        if (! $this->language && ! in_array($feed->get_language(), ['nl', 'nl-nl'])) {
             $this->delete();
 
             return;
@@ -103,7 +103,7 @@ class Show extends Model
             'description' => strip_tags($feed->get_description()),
             'image_url' => $feed->get_image_url(),
             'author' => htmlspecialchars_decode($author?->get_name()),
-            'language' => $feed->get_language()
+            'language' => $this->language ?? $feed->get_language()
         ]);
     }
 
