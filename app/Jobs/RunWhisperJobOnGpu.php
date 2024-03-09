@@ -106,7 +106,7 @@ class RunWhisperJobOnGpu implements ShouldQueue
                     'error_message' => 'No CUDA GPUs are available, recreation started'
                 ]);
 
-                RecreateGpuInstance::dispatch($this->gpu);
+                RecreateGpuInstance::dispatch($this->gpu)->onQueue("gpus");
             }
         }
 
