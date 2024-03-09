@@ -106,7 +106,15 @@ class Gpu extends Model
 
         $jobs = [];
 
-        $whisperJobs = WhisperJob::where('status', 'queued')->whereNull('gpu_id')->limit(10)->get();
+        $whisperJobs = WhisperJob::where('whisper_jobs.status', 'queued')
+            ->whereNull('whisper_jobs.gpu_id')
+            ->join("episodes", "whisper_jobs.episode_id", "=", "episodes.id")
+            ->join('shows', 'episodes.show_id', '=', 'shows.id')
+            ->orderBy('shows.priority', 'desc')
+            ->orderBy("episodes.published_at", "desc")
+            ->select("whisper_jobs.*")
+            ->limit(10)
+            ->get();
 
         if ($whisperJobs->isEmpty()) return;
 
