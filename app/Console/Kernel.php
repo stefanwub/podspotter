@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:create-episode-whisper-jobs')->everyFiveMinutes();
         $schedule->job(ImportPodcasts::class)->daily();
 
-        // $schedule->command('app:create-episode-index')->everyMinute();
+        $schedule->command('app:create-episode-index')->everyMinute();
 
         $schedule->command('app:add-whisper-jobs-to-gpus')->everyMinute();
 

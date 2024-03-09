@@ -197,8 +197,16 @@ class Search extends Model
             'offset' => $offset,
             'limit' => $limit,
             'cropLength' => 100,
-            'sort' => ['published_at:asc']
+            'sort' => ['published_at:desc']
         ];
+
+        // if (! $filter) {
+        //     $filter = [];
+        // }
+
+        // $filter[] = [
+        //     'published_at > ' . now()->subDay()->timestamp
+        // ];
 
         if ($filter && count($filter)) {
             $body['filter'] = $filter;

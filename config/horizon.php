@@ -206,7 +206,7 @@ return [
                 'queue' => ['episodes'],
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'time',
-                'maxProcesses' => 1,
+                'maxProcesses' => 5,
                 'maxTime' => 0,
                 'maxJobs' => 0,
                 'memory' => 128,

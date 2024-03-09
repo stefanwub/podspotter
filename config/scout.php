@@ -156,15 +156,12 @@ return [
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
             Episode::class => [
-                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at', 'indexed_at', 'medium'],
+                'filterableAttributes' => ['id', 'show_id', 'categories', 'published_at', 'indexed_at', 'created_at', 'medium'],
                 'searchableAttributes' => [
                     'description',
                     'sections.t'
                 ],
-                'sortableAttributes' => [
-                    'published_at',
-                    'indexed_at'
-                ]
+                'sortableAttributes' => ['created_at', 'published_at', 'indexed_at'],
                 // 'rankingRules' => [
                 //     "exactness",
                 //     // "words",
@@ -172,14 +169,15 @@ return [
                 //     // "attribute",
                 //     // "sort"
                 // ]
+            ],
+            Show::class => [
+                'filterableAttributes' => ['id', 'categories', 'medium'],
+                'searchableAttributes' => [
+                    'title',
+                    'description'
                 ],
-                Show::class => [
-                    'filterableAttributes' => ['id', 'categories', 'medium'],
-                    'searchableAttributes' => [
-                        'title',
-                        'description'
-                    ],
-                ]
+                'sortableAttributes' => ['ranking', 'title'],
+            ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
