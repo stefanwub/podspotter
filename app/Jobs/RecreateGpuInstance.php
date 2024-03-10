@@ -38,7 +38,7 @@ class RecreateGpuInstance implements ShouldQueue
                 'status' => 'creating'
             ]);
 
-            CreateGpuInstance::dispatch()->onQueue("gpus");
+            CreateGpuInstance::dispatch($this->gpu)->onQueue("gpus");
         } else {
             $this->gpu->update([
                 'status' => 'failed',
