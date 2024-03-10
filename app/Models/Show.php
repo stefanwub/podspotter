@@ -18,6 +18,10 @@ class Show extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'active' => 'boolean'
+    ];
+
     public function toSearchableArray()
     {
         return [
@@ -27,6 +31,7 @@ class Show extends Model
             'image_url' => $this->image_url,
             'medium' => $this->medium,
             'ranking' => $this->ranking ?? 1000,
+            'active' => $this->active,
             'categories' => $this->categories->pluck('id')
         ];
     }
