@@ -205,6 +205,33 @@ return [
                         'dimensions' => 1536
                     ]
                 ]
+            ],
+            'segments' => [
+                'displayedAttributes' => [
+                    'id',
+                    'title',
+                    'episode_id',
+                    'show',
+                    'show_id',
+                    'categories',
+                    'published_at',
+                    'indexed_at',
+                    'start',
+                    'end',
+                    'medium',
+                    'text'
+                ],
+                'filterableAttributes' => ['id', 'episode_id', 'show_id', 'categorties', 'published_at', 'indexed_at', 'start', 'end', 'medium'],
+                'searchableAttributes' => [
+                    'text'
+                ],
+                'sortableAttributes' => ['published_at', 'indexed_at', 'start'],
+                'embedders' => [
+                    "default" => [
+                        'source' => 'userProvided',
+                        'dimensions' => 1536
+                    ]
+                ]
             ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],

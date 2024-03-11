@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use OpenAI\Laravel\Facades\OpenAI;
+use Str;
 
 class UpsertSectionsToVectorDb implements ShouldQueue
 {
@@ -30,7 +31,7 @@ class UpsertSectionsToVectorDb implements ShouldQueue
         $embedding = OpenAI::embeddings()->create([
             'model' => 'text-embedding-3-small',
             'input' => collect($sections)->map(function($section) {
-                return "Fragment uit " . $section['show']['title'] . ": " . $section['text'];
+                return "Fragment uit " . Str::limit($section['show']['title']) . " - " . Str::limit($section['show']['title']) . ": " . $section['text'];
             })
         ]);
 
@@ -112,7 +113,7 @@ class UpsertSectionsToVectorDb implements ShouldQueue
         $response = Http::withHeaders([
             'X-Meili-API-Key' => config('scout.meilisearch.key'),
             'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-        ])->post(config('scout.meilisearch.host') . '/indexes/sections/documents?primaryKey=id', $sectionsWithVectors);
+        ])->post(config('scout.meilisearch.host') . '/indexes/segments/documents?primaryKey=id', $sectionsWithVectors);
 
         if ($response->failed()) {
             throw new Exception($response->body());
