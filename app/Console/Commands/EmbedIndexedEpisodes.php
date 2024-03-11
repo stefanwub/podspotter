@@ -27,7 +27,7 @@ class EmbedIndexedEpisodes extends Command
      */
     public function handle()
     {
-        $episodes = Episode::where('status', 'indexed')->whereNull('embedded_at')->limit(10)->get();
+        $episodes = Episode::where('status', 'indexed')->whereNull('embedded_at')->limit(100)->get();
 
         foreach ($episodes as $episode) {
             UpsertSectionsToVectorDb::dispatch($episode)->onQueue('embedding');
