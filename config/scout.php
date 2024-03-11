@@ -178,7 +178,21 @@ return [
                     'description'
                 ],
                 'sortableAttributes' => ['ranking', 'title'],
-            ]
+            ],
+            // 'sections' => [
+            //     'filterableAttributes' => ['id', 'episode_id', 'show_id', 'categorties', 'start', 'end'],
+            //     'searchableAttributes' => [
+            //         'text'
+            //     ],
+            //     'sortableAttributes' => ['start', 'end'],
+            //     'embedders' => [
+            //         "default" => [
+            //             'source' => 'huggingFace',
+            //             'model' => 'bge-base-en-v1.5',
+            //             'documentTemplate' => "Fragment uit de podcast '{{ doc.show.title }}: {{ doc.text }}'"
+            //         ]
+            //     ]
+            // ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],

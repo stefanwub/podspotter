@@ -116,6 +116,95 @@ Route::get('/search/stats', function (Request $request) {
     return $response->json();
 });
 
+Route::get('/search/settings', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->get(config('scout.meilisearch.host') . '/indexes/episodes/settings');
+
+    return $response->json();
+});
+
+Route::get('/search/settings-update', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->patch(config('scout.meilisearch.host') . '/indexes/episodes/settings', [
+        'sortableAttributes' => ['published_at', 'indexed_at']
+    ]);
+
+    return $response->json();
+});
+
+Route::get('/search/cancel-tasks', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->post(config('scout.meilisearch.host') . '/tasks/cancel?types=documentAdditionOrUpdate');
+
+    return $response->json();
+});
+
+Route::get('/search/tasks', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->get(config('scout.meilisearch.host') . '/tasks?limit=100');
+
+    return $response->json();
+});
+
+// Route::get('/search/delete-index', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->delete(config('scout.meilisearch.host') . '/indexes/shows');
+
+//     return $response->json();
+// });
+
+// Route::get('/search/enable-vector', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->patch(config('scout.meilisearch.host') . '/experimental-features', [
+//         'vectorStore' => true
+//     ]);
+
+//     return $response->json();
+// });
+
+// Route::get('/search/test-vector', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->post(config('scout.meilisearch.host') . '/indexes/sections/documents', [
+//         [
+//             'id' => 1,
+//             'show' => [
+//                 'id' => 'test',
+//                 'title' => 'Test'
+//             ],
+//             'show_id' => 'test',
+//             'episode_id' => 'episode-id-test',
+//             'start' => 0,
+//             'end' => 10,
+//             'text' => 'In meditatie ervaar je een staat van rust die nog dieper is dan slaap.'
+//         ]
+//     ]);
+
+//     return $response->json();
+// });
+
+// Route::get('/search/sections', function (Request $request) {
+//     $response = Http::withHeaders([
+//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
+//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+//     ])->get(config('scout.meilisearch.host') . '/indexes/sections/documents');
+
+//     return $response->json();
+// });
+
 // Route::get('/podcast-index', function (Request $request) {
 //     return PodcastIndexService::make()->get('podcasts/trending', [
 //         'lang' => 'nl',
