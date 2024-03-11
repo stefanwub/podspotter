@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('queue:prune-batches')->daily();
 
-        $schedule->command('app:embed-indexed-episodes')->everyFifteenMinutes();
+        // $schedule->command('app:embed-indexed-episodes')->everyFifteenMinutes();
     }
 
     /**
