@@ -229,9 +229,9 @@ return [
                 'nice' => 0,
             ],
 
-            'supervisor-for-import-embeddings' => [
+            'supervisor-for-import-embedding' => [
                 'connection' => 'redis',
-                'queue' => ['embeddings'],
+                'queue' => ['embedding'],
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'time',
                 'maxProcesses' => 1,
