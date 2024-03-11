@@ -155,14 +155,14 @@ Route::get('/search/tasks', function (Request $request) {
     return $response->json();
 });
 
-// Route::get('/search/delete-index', function (Request $request) {
-//     $response = Http::withHeaders([
-//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
-//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-//     ])->delete(config('scout.meilisearch.host') . '/indexes/shows');
+Route::get('/search/delete-index', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->delete(config('scout.meilisearch.host') . '/indexes/segments');
 
-//     return $response->json();
-// });
+    return $response->json();
+});
 
 Route::get('/search/enable-vector', function (Request $request) {
     $response = Http::withHeaders([

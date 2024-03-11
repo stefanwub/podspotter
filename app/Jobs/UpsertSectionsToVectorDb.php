@@ -41,7 +41,7 @@ class UpsertSectionsToVectorDb implements ShouldQueue
         $embedding = OpenAI::embeddings()->create([
             'model' => 'text-embedding-3-small',
             'input' => collect($sections)->map(function($section) {
-                return "Fragment uit " . Str::limit($section['show']['title']) . " - " . Str::limit($section['show']['title']) . ": " . $section['text'];
+                return "Fragment uit " . Str::limit($section['show']['title']) . " van " . $section['show']['author'] . " - " . Str::limit($section['title']) . ": " . $section['text'];
             })
         ]);
 

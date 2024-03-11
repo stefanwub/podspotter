@@ -180,7 +180,8 @@ class Episode extends Model
             return [
                 'id' => $this->id . '_' . $index,
                 'show' => [
-                    'title' => $this->show?->title
+                    'title' => $this->show?->title,
+                    'author' => $this->show?->author,
                 ],
                 'categories' => $this->show?->categories->pluck('id'),
                 'title' => $this->title,
