@@ -128,8 +128,8 @@ class UpsertSectionsToVectorDb implements ShouldQueue
             }
         }
 
-        // $this->episode->update([
-        //     'embedded_at' => now()
-        // ]);
+        $this->episode->update([
+            'embedded_at' => now()
+        ]);
     }
 }
