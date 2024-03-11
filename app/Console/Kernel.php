@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('app:import-new-episodes')->everyFifteenMinutes();
+        $schedule->command('app:import-new-episodes')->hourly();
         // $schedule->command('app:run-whisper-jobs')->everyMinute();
         $schedule->command('app:create-episode-whisper-jobs')->everyFiveMinutes();
         $schedule->job(ImportPodcasts::class)->daily();
