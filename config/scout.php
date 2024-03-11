@@ -179,20 +179,33 @@ return [
                 ],
                 'sortableAttributes' => ['ranking', 'title'],
             ],
-            // 'sections' => [
-            //     'filterableAttributes' => ['id', 'episode_id', 'show_id', 'categorties', 'start', 'end'],
-            //     'searchableAttributes' => [
-            //         'text'
-            //     ],
-            //     'sortableAttributes' => ['start', 'end'],
-            //     'embedders' => [
-            //         "default" => [
-            //             'source' => 'huggingFace',
-            //             'model' => 'bge-base-en-v1.5',
-            //             'documentTemplate' => "Fragment uit de podcast '{{ doc.show.title }}: {{ doc.text }}'"
-            //         ]
-            //     ]
-            // ]
+            'sections' => [
+                'displayedAttributes' => [
+                    'id',
+                    'title',
+                    'episode_id',
+                    'show',
+                    'show_id',
+                    'categories',
+                    'published_at',
+                    'indexed_at',
+                    'start',
+                    'end',
+                    'medium',
+                    'text'
+                ],
+                'filterableAttributes' => ['id', 'episode_id', 'show_id', 'categorties', 'published_at', 'indexed_at', 'start', 'end', 'medium'],
+                'searchableAttributes' => [
+                    'text'
+                ],
+                'sortableAttributes' => ['published_at', 'indexed_at', 'start'],
+                'embedders' => [
+                    "default" => [
+                        'source' => 'userProvided',
+                        'dimensions' => 1536
+                    ]
+                ]
+            ]
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],

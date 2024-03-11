@@ -229,6 +229,20 @@ return [
                 'nice' => 0,
             ],
 
+            'supervisor-for-import-embeddings' => [
+                'connection' => 'redis',
+                'queue' => ['embeddings'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'maxProcesses' => 1,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 128,
+                'tries' => 2,
+                'timeout' => 120,
+                'nice' => 0,
+            ],
+
             'supervisor-gpus' => [
                 'connection' => 'redis',
                 'queue' => ['gpus'],

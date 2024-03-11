@@ -2,17 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Models\WhisperJob;
+use App\Jobs\UpsertSectionsToVectorDb;
+use App\Models\Episode;
 use Illuminate\Console\Command;
 
-class CreateEpisodeSections extends Command
+class EmbedIndexedEpisodes extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:create-episode-sections';
+    protected $signature = 'app:embed-indexed-episodes';
 
     /**
      * The console command description.
@@ -26,12 +27,10 @@ class CreateEpisodeSections extends Command
      */
     public function handle()
     {
-        $whisperJobs = WhisperJob::where('status', 'succeeded')->limit(100)->get();
+        $episodes = Episode::where('status', 'indexed')->whereNull('embedded_at')->limit(10)->get();
 
-        foreach ($whisperJobs as $whisperJob) {
-            dispatch(function () use ($whisperJob) {
-                $whisperJob->episode?->createSections();
-            })->onQueue('sections');
+        foreach ($episodes as $episode) {
+            UpsertSectionsToVectorDb::dispatch($episode)->onQueue('embedding');
         }
     }
 }

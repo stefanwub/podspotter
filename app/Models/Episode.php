@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\UpsertSectionsToVectorDb;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,8 @@ class Episode extends Model
     protected $casts = [
         'transcribed_at' => 'datetime',
         'published_at' => 'datetime',
-        'indexed_at' => 'datetime'
+        'indexed_at' => 'datetime',
+        'embedded_at' => 'datetime'
     ];
 
     protected static function booted()
@@ -124,80 +126,6 @@ class Episode extends Model
         ]);
     }
 
-    public function createSections()
-    {        
-        $whisperJob = $this->whisperJobs->where('status', 'succeeded')->first();
-
-        if (! $whisperJob) {
-            // $this->createWhisperJob();
-            return;
-        }
-
-        if ($this->whisperJobs->where('status', 'completed')->first()) {
-            $whisperJob->delete();
-
-            return;
-        }
-
-        $this->sections()->delete();
-
-        $duration = 0;
-        $start = 0;
-        $end = 0;
-        $text = '';
-
-        $sections = [];
-
-        foreach ($whisperJob->chunks as $chunk) {
-            $startChunk = round($chunk['timestamp'][0], 3) * 1000;
-            $endChunk = round($chunk['timestamp'][1], 3) * 1000;
-
-            if (! $duration) {
-                $start = $startChunk;
-            }
-
-            $end = $endChunk;
-
-            $duration += ($endChunk - $startChunk);
-
-            $text .= $chunk['text'];
-
-            if ($duration >= 60000) {
-                $sections[] = [
-                    'text' => $text,
-                    'start' => $start,
-                    'end' => $end,
-                    'duration' => $duration
-                ];
-                
-                $this->createSection($text, $start, $end);
-
-                $duration = 0;
-                $text = '';
-            }
-        }
-
-        if ($text) {
-            $sections[] = [
-                'text' => $text,
-                'start' => $start,
-                'end' => $end,
-                'duration' => $duration
-            ];
-            
-            $this->createSection($text, $start, $end);
-        }
-
-        $this->update([
-            'status' => 'transcribed',
-            'transcribed_at' => now()
-        ]);
-
-        $whisperJob->update([
-            'status' => 'completed'
-        ]);
-    }
-
     public function toSections(WhisperJob $whisperJob = null)
     {
         if (! $whisperJob) return [];
@@ -246,17 +174,25 @@ class Episode extends Model
         return $sections;
     }
 
-    public function createSection($text, $start, $end)
+    public function getSectionsForEmbedding(WhisperJob $whisperJob)
     {
-        // $embedding = OpenAI::embeddings()->create([
-        //     'model' => 'text-embedding-3-small',
-        //     'input' => $text
-        // ]);
-
-        $this->sections()->create([
-            'content' => $text,
-            'start_time' => $start,
-            'end_time' => $end
-        ]); 
+        return collect($this->toSections($whisperJob))->map(function ($section, $index) {
+            return [
+                'id' => $this->id . '_' . $index,
+                'show' => [
+                    'title' => $this->show?->title
+                ],
+                'categories' => $this->show?->categories->pluck('id'),
+                'title' => $this->title,
+                'show_id' => $this->show_id,
+                'episode_id' => $this->id,
+                'medium' => $this->show?->medium,
+                'published_at' => $this->published_at->timestamp,
+                'indexed_at' => $this->indexed_at ? $this->indexed_at->timestamp : $this->published_at->timestamp,
+                'text' => $section['t'],
+                'start' => $section['s'],
+                'end' => $section['e']
+            ];
+        });
     }
 }

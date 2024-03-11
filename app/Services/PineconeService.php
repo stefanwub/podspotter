@@ -19,7 +19,7 @@ class PineconeService
 
     public static function make()
     {
-        return app(PineconeService::class);
+        return new self;
     }
 
     protected function withHeaders()
@@ -39,7 +39,7 @@ class PineconeService
         return $this->withHeaders()->post($this->host . '/' . $path, $data);
     }
 
-    public function upsert($records = [], $namespace = 'podspotter')
+    public function upsert($records = [], $namespace = 'spotter')
     {
         return $this->post('vectors/upsert', [
             "vectors" => $records,
@@ -56,7 +56,7 @@ class PineconeService
         ]);
     }
 
-    public function deleteAll($namespace = 'podspotter')
+    public function deleteAll($namespace = 'spotter')
     {
         return $this->post('vectors/delete', [
             "deleteAll" => true,

@@ -8,6 +8,7 @@ use App\Http\Controllers\SearchResultController;
 use App\Http\Controllers\UpdateSearchAlertController;
 use App\Http\Controllers\WhisperJobController;
 use App\Http\Resources\UserResource;
+use App\Models\Episode;
 use App\Services\PodcastIndexService;
 use Google\Cloud\Compute\V1\InstancesClient;
 use Illuminate\Http\Request;
@@ -163,16 +164,16 @@ Route::get('/search/tasks', function (Request $request) {
 //     return $response->json();
 // });
 
-// Route::get('/search/enable-vector', function (Request $request) {
-//     $response = Http::withHeaders([
-//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
-//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-//     ])->patch(config('scout.meilisearch.host') . '/experimental-features', [
-//         'vectorStore' => true
-//     ]);
+Route::get('/search/enable-vector', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->patch(config('scout.meilisearch.host') . '/experimental-features', [
+        'vectorStore' => true
+    ]);
 
-//     return $response->json();
-// });
+    return $response->json();
+});
 
 // Route::get('/search/test-vector', function (Request $request) {
 //     $response = Http::withHeaders([
@@ -196,14 +197,16 @@ Route::get('/search/tasks', function (Request $request) {
 //     return $response->json();
 // });
 
-// Route::get('/search/sections', function (Request $request) {
-//     $response = Http::withHeaders([
-//         'X-Meili-API-Key' => config('scout.meilisearch.key'),
-//         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-//     ])->get(config('scout.meilisearch.host') . '/indexes/sections/documents');
+Route::get('/search/sections', function (Request $request) {
+    $response = Http::withHeaders([
+        'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+    ])->post(config('scout.meilisearch.host') . '/indexes/sections/search', [
+        'q' => $request->query('q') ?? ''
+    ]);
 
-//     return $response->json();
-// });
+    return $response->json();
+});
 
 // Route::get('/podcast-index', function (Request $request) {
 //     return PodcastIndexService::make()->get('podcasts/trending', [
@@ -287,4 +290,17 @@ Route::get('/search/tasks', function (Request $request) {
 // Route::get('/delete-google-instance', function () {
 //     $instancesClient = new InstancesClient();
 //     $instancesClient->delete('testname', 'my-project-1496764198259', 'us-central1-a');
+// });
+
+// Route::get('embed-sections/{episode}', function (Episode $episode) {
+//     $sections = $episode->getSectionsForEmbedding($episode->whisperJob)->slice(0, 15);
+
+//     $embedding = OpenAI::embeddings()->create([
+//         'model' => 'text-embedding-3-small',
+//         'input' => $sections->map(function($section) {
+//             return "Fragment uit " . $section['show']['title'];
+//         })
+//     ]);
+
+//     return $embedding['data'][0]['embedding'];
 // });
