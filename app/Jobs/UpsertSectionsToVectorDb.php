@@ -120,14 +120,14 @@ class UpsertSectionsToVectorDb implements ShouldQueue
             $pineconeSections = array_merge($pineconeSections, $this->getVectors($sections)['pinecone']);
         }
 
-        $response = Http::withHeaders([
-            'X-Meili-API-Key' => config('scout.meilisearch.key'),
-            'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-        ])->post(config('scout.meilisearch.host') . '/indexes/segments/documents?primaryKey=id', $sectionsWithVectors);
+        // $response = Http::withHeaders([
+        //     'X-Meili-API-Key' => config('scout.meilisearch.key'),
+        //     'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
+        // ])->post(config('scout.meilisearch.host') . '/indexes/segments/documents?primaryKey=id', $sectionsWithVectors);
 
-        if ($response->failed()) {
-            throw new Exception($response->body());
-        }
+        // if ($response->failed()) {
+        //     throw new Exception($response->body());
+        // }
 
         $pineconeChunks = array_chunk($pineconeSections, 100);
 
