@@ -47,13 +47,20 @@ class PineconeService
         ]);
     }
 
-    public function query($vectors, $topK = 10)
+    public function query($vectors, $topK = 10, $filter = [])
     {
-        return $this->post('query', [
-            'vectors' => $vectors,
+        $body = [
+            'vector' => $vectors,
             'topK' => $topK,
-            "includeValues" => true
-        ]);
+            "includeMetadata" => true,
+            'namespace' => 'spotter'
+        ];
+
+        if (! empty($filter)) {
+            $body['filter'] = $filter;
+        }
+
+        return collect($this->post('query', $body)->json('matches'));
     }
 
     public function deleteAll($namespace = 'spotter')

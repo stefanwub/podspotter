@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GpuController;
 use App\Http\Controllers\PerformSearchController;
+use App\Http\Controllers\PerformSemanticSearchController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SearchResultController;
 use App\Http\Controllers\UpdateSearchAlertController;
@@ -39,6 +40,7 @@ Route::apiResource('searches.results', SearchResultController::class)->except('u
 Route::put('/searches/{search}/update-alerts', UpdateSearchAlertController::class)->name('search.update-alerts');
 
 Route::post('/teams/{team}/perform-search', PerformSearchController::class)->name('team.perform-search');
+Route::post('/teams/{team}/perform-semantic-search', PerformSemanticSearchController::class)->name('team.perform-semantic-search');
 
 Route::apiResource('categories', CategoryController::class);
 
