@@ -29,7 +29,7 @@ class CreateEpisodeIndex extends Command
     {
         $episodes = Episode::whereIn('status', ['transcribing', 'transcribed'])->whereHas("whisperJobs", function ($q) {
             $q->whereIn("status", ["completed", "succeeded"]);
-        })->orderBy('created_at', 'desc')->limit(100)->get();
+        })->orderBy('created_at', 'desc')->limit(50)->get();
 
         foreach ($episodes as $episode) {
             IndexEpisode::dispatch($episode)->onQueue('episodes');
