@@ -234,7 +234,7 @@ return [
                 'queue' => ['embedding'],
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'time',
-                'maxProcesses' => 2,
+                'maxProcesses' => 1,
                 'maxTime' => 0,
                 'maxJobs' => 0,
                 'memory' => 128,
