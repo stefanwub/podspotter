@@ -17,7 +17,7 @@ class GetOrCreateEpisodeMediaFileController extends Controller
         $mediaFile = $episode->mediaFile;
 
         if (! $mediaFile) {
-            DownloadEpisodeMedia::dispatchSync($episode)->onQueue('media');
+            DownloadEpisodeMedia::dispatchSync($episode);
         }
 
         $episode->refresh();
