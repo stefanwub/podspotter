@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\CopyShowImageToStorage;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
+use Storage;
 use Str;
 use willvincent\Feeds\Facades\FeedsFacade;
 
@@ -22,6 +24,16 @@ class Show extends Model
         'active' => 'boolean'
     ];
 
+    protected static function booted()
+    {
+        self::saved(function (Show $show): void {
+            if ($show->image_url && $show->getOriginal('image_url') !== $show->image_url) {
+                CopyShowImageToStorage::dispatch($show);
+            }
+        });
+    }
+
+
     public function toSearchableArray()
     {
         return [
@@ -32,7 +44,9 @@ class Show extends Model
             'medium' => $this->medium,
             'ranking' => $this->ranking ?? 1000,
             'active' => $this->active,
-            'categories' => $this->categories->pluck('id')
+            'categories' => $this->categories->pluck('id'),
+            'image_storage_disk' => $this->image_storage_disk,
+            'image_storage_key' => $this->image_storage_key
         ];
     }
 
@@ -111,6 +125,36 @@ class Show extends Model
             'author' => htmlspecialchars_decode($author?->get_name()),
             'language' => $this->language ?? $feed->get_language()
         ]);
+    }
+
+    public function downloadAndSaveFile($url, $fileName)
+    {
+        // Extract the filename and extension from the URL
+        $path = parse_url($url, PHP_URL_PATH);
+        $pathInfo = pathinfo($path);
+        $fileExtension = isset($pathInfo['extension']) ? $pathInfo['extension'] : '';
+        $newFileName = $fileName . '.' . $fileExtension;
+
+        // Download and save the file
+        $fileContents = file_get_contents($url);
+        if ($fileContents !== false) {
+            Storage::put($newFileName, $fileContents);
+            return $newFileName;
+        } else {
+            return null;
+        }
+    }
+
+    public function copyImageToStorage()
+    {
+        $key = $this->downloadAndSaveFile($this->image_url, "/shows/$this->id/" . Str::slug($this->title));
+        
+        if ($key) {
+            $this->update([
+                'image_storage_key' => $key,
+                'image_storage_disk' => config('filesystems.default')
+            ]);
+        }
     }
 
     protected function toSeconds($time)
@@ -220,5 +264,10 @@ class Show extends Model
                 'published_at' => Carbon::parse($item->get_date())
             ]);
         }
+    }
+
+    public function getImageStorageUrlAttribute()
+    {
+        return Storage::disk($this->image_storage_disk)->url($this->image_storage_key);
     }
 }

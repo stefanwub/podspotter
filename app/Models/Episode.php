@@ -109,6 +109,16 @@ class Episode extends Model
         return $this->hasMany(Section::class);
     }
 
+    public function mediaFile() : HasOne
+    {
+        return $this->hasOne(MediaFile::class);
+    }
+
+    public function clips() : HasMany
+    {
+        return $this->hasMany(Clip::class);
+    }
+
     public function createWhisperJob()
     {
         if ($this->whisperJob) {

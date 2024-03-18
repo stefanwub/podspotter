@@ -215,6 +215,20 @@ return [
                 'nice' => 0,
             ],
 
+            'supervisor-for-audio' => [
+                'connection' => 'redis',
+                'queue' => ['audio'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'maxProcesses' => 1,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 128,
+                'tries' => 1,
+                'timeout' => 500,
+                'nice' => 0,
+            ],
+
             'supervisor-for-import-episodes' => [
                 'connection' => 'redis',
                 'queue' => ['import-episodes'],
@@ -389,7 +403,7 @@ return [
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default', 'scout'],
+                'queue' => ['default'],
                 'balance' => 'auto',
                 'autoScalingStrategy' => 'time',
                 'maxProcesses' => 3,
@@ -442,6 +456,20 @@ return [
                 'memory' => 128,
                 'tries' => 1,
                 'timeout' => 750,
+                'nice' => 0,
+            ],
+
+            'supervisor-for-audio' => [
+                'connection' => 'redis',
+                'queue' => ['audio'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'maxProcesses' => 1,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 128,
+                'tries' => 1,
+                'timeout' => 500,
                 'nice' => 0,
             ],
         ],

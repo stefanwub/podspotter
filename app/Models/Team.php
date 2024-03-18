@@ -31,6 +31,11 @@ class Team extends Model
         return $this->hasMany(Search::class);
     }
 
+    public function clips() : HasMany
+    {
+        return $this->hasMany(Clip::class);
+    }
+
     public function savedSearches() : HasMany
     {
         return $this->hasMany(Search::class)->whereNotNull('saved_at');

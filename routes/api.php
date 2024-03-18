@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClipController;
+use App\Http\Controllers\ClipPostController;
+use App\Http\Controllers\CreateEpisodeWaveformController;
+use App\Http\Controllers\DownloadPostController;
+use App\Http\Controllers\GetOrCreateEpisodeMediaFileController;
+use App\Http\Controllers\GetRoundedShowImageController;
 use App\Http\Controllers\GpuController;
 use App\Http\Controllers\PerformSearchController;
 use App\Http\Controllers\PerformSemanticSearchController;
@@ -9,7 +15,9 @@ use App\Http\Controllers\SearchResultController;
 use App\Http\Controllers\UpdateSearchAlertController;
 use App\Http\Controllers\WhisperJobController;
 use App\Http\Resources\UserResource;
+use App\Models\Clip;
 use App\Models\Episode;
+use App\Services\ClipPostService;
 use App\Services\PodcastIndexService;
 use Google\Cloud\Compute\V1\InstancesClient;
 use Illuminate\Http\Request;
@@ -42,10 +50,20 @@ Route::put('/searches/{search}/update-alerts', UpdateSearchAlertController::clas
 Route::post('/teams/{team}/perform-search', PerformSearchController::class)->name('team.perform-search');
 Route::post('/teams/{team}/perform-semantic-search', PerformSemanticSearchController::class)->name('team.perform-semantic-search');
 
+Route::post('episodes/{episode}/create-waveform', CreateEpisodeWaveformController::class)->name('episodes.create-waveform');
+Route::get('episodes/{episode}/media-file/get-or-create', GetOrCreateEpisodeMediaFileController::class)->name('episodes.get-or-create-audio-file');
+
 Route::apiResource('categories', CategoryController::class);
 
 Route::apiResource('gpus', GpuController::class);
 Route::apiResource('whisper-jobs', WhisperJobController::class)->only('index', 'show');
+
+Route::apiResource('teams.clips', ClipController::class);
+Route::apiResource('clips.posts', ClipPostController::class);
+
+Route::get('shows/{show}/rounded-image', GetRoundedShowImageController::class)->name('show.rounded-image');
+
+Route::get('posts/{post}/download', DownloadPostController::class)->name('posts.download');
 
 // Route::get('/search', function (Request $request) {
 //     $response = Http::withHeaders([
@@ -161,7 +179,7 @@ Route::get('/search/delete-index', function (Request $request) {
     $response = Http::withHeaders([
         'X-Meili-API-Key' => config('scout.meilisearch.key'),
         'Authorization' => 'Bearer ' . config('scout.meilisearch.key'),
-    ])->delete(config('scout.meilisearch.host') . '/indexes/segments');
+    ])->delete(config('scout.meilisearch.host') . '/indexes/shows');
 
     return $response->json();
 });
@@ -305,4 +323,14 @@ Route::get('/search/sections', function (Request $request) {
 //     ]);
 
 //     return $embedding['data'][0]['embedding'];
+// });
+
+// Route::get('ffmpeg-command/{clip}', function(Clip $clip) {
+//     return ClipPostService::clip($clip)
+//         ->createPost(1500, 1500)
+//         ->addBackground()
+//         ->addWaveform()
+//         ->addShowImage($clip->episode?->show)
+//         ->addImageFromDisk('shows/9b63c377-599f-4923-9818-469b22871a90/themetalk.jpg', 'r2', 200, 200)
+//         ->save('testoutput9.mp4');
 // });
