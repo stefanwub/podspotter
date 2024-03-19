@@ -82,7 +82,7 @@ class CreatePostByTemplateName implements ShouldQueue
                 ->addWaveform('#510fa8', 'cline', 1080, 480, 0, 350)
                 ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', 350)
                 ->addText($this->post->title, 'Black', 26, 72, 100)
-                ->addSubtitles('#c7d2fe', '#000000')
+                ->addSubtitles('#FFFFFF', '#000000')
                 ->save($path);
 
             $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
