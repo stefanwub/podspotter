@@ -68,6 +68,10 @@ return [
 
     'google_cloud' => [
         'project' => env('GOOGLE_CLOUD_PROJECT')
+    ],
+
+    'replicate' => [
+        'api_token' => env('REPLICATE_API_TOKEN')
     ]
 
 ];

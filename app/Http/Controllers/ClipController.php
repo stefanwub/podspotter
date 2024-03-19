@@ -46,6 +46,10 @@ class ClipController extends Controller
                 'required',
                 'exists:episodes,id'
             ],
+            'title' => [
+                'nullable',
+                'string'
+            ],
             'start_region' => [
                 'required',
                 'integer',
@@ -68,6 +72,7 @@ class ClipController extends Controller
             'start_region' => $request->get('start_region'),
             'end_region' => $request->get('end_region'),
             'name' => $request->get('name'),
+            'title' => $request->get('title'),
             'status' => 'processing'
         ]);
 
@@ -103,6 +108,10 @@ class ClipController extends Controller
                 'integer',
                 'gt:start_region'
             ],
+            'title' => [
+                'nullable',
+                'string'
+            ],
             'name' => [
                 'required',
                 'string',
@@ -113,7 +122,8 @@ class ClipController extends Controller
         $clip->update([
             'start_region' => $request->get('start_region'),
             'end_region' => $request->get('end_region'),
-            'name' => $request->get('name')
+            'name' => $request->get('name'),
+            'title' =>  $request->get('title')
         ]);       
 
         return new ClipResource($clip);

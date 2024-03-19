@@ -3,8 +3,11 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClipController;
 use App\Http\Controllers\ClipPostController;
+use App\Http\Controllers\ClipSubtitlesWebhookController;
 use App\Http\Controllers\CreateEpisodeWaveformController;
 use App\Http\Controllers\DownloadPostController;
+use App\Http\Controllers\GenerateClipSubtitlesController;
+use App\Http\Controllers\GetClipSubtitlesController;
 use App\Http\Controllers\GetOrCreateEpisodeMediaFileController;
 use App\Http\Controllers\GetRoundedShowImageController;
 use App\Http\Controllers\GpuController;
@@ -12,6 +15,7 @@ use App\Http\Controllers\PerformSearchController;
 use App\Http\Controllers\PerformSemanticSearchController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SearchResultController;
+use App\Http\Controllers\UpdateClipSubtitlesController;
 use App\Http\Controllers\UpdateSearchAlertController;
 use App\Http\Controllers\WhisperJobController;
 use App\Http\Resources\UserResource;
@@ -64,6 +68,11 @@ Route::apiResource('clips.posts', ClipPostController::class);
 Route::get('shows/{show}/rounded-image', GetRoundedShowImageController::class)->name('show.rounded-image');
 
 Route::get('posts/{post}/download', DownloadPostController::class)->name('posts.download');
+
+Route::put('clips/{clip}/subtitles', UpdateClipSubtitlesController::class)->name('clip.update-subtitles');
+Route::get('clips/{clip}/subtitles', GetClipSubtitlesController::class)->name('clip.subtitles');
+Route::post('clips/{clip}/subtitles', GenerateClipSubtitlesController::class)->name('clip.generate-subtitles');
+Route::post('clips/{clip}/subtitles-webhook', ClipSubtitlesWebhookController::class)->name('clip.subtitles-webhook');
 
 // Route::get('/search', function (Request $request) {
 //     $response = Http::withHeaders([

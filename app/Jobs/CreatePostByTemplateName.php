@@ -55,8 +55,10 @@ class CreatePostByTemplateName implements ShouldQueue
             ClipPostService::clip($this->post->clip)
                 ->size(1080, 1080)
                 ->addBackground('gradient:#510fa8-#4338ca')
-                ->addWaveform('White', 'line', 1080, 400, 0, 600)
-                ->addShowImage($this->post->clip?->episode?->show, 750, 750)
+                ->addWaveform('#c7d2fe', 'cline', 1080, 480, 0, 350)
+                ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', 350)
+                ->addText($this->post->title, 'white', 26, 72, 100)
+                ->addSubtitles('#FFFFFF', '#000000')
                 ->save($path);
 
             $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
@@ -77,8 +79,10 @@ class CreatePostByTemplateName implements ShouldQueue
             ClipPostService::clip($this->post->clip)
                 ->size(1080, 1080)
                 ->addBackground('gradient:#cccccc-#ffffff')
-                ->addWaveform('#4338ca', 'line', 1080, 400, 0, 600)
-                ->addShowImage($this->post->clip?->episode?->show, 750, 750)
+                ->addWaveform('#510fa8', 'cline', 1080, 480, 0, 350)
+                ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', 350)
+                ->addText($this->post->title, 'Black', 26, 72, 100)
+                ->addSubtitles('#c7d2fe', '#000000')
                 ->save($path);
 
             $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
@@ -99,8 +103,10 @@ class CreatePostByTemplateName implements ShouldQueue
             ClipPostService::clip($this->post->clip)
                 ->size(1080, 1920)
                 ->addBackground('gradient:#510fa8-#4338ca')
-                ->addWaveform('White', 'line', 1080, 400)
-                ->addShowImage($this->post->clip?->episode?->show, 750, 750)
+                ->addWaveform('#c7d2fe', 'cline', 1080, 480, 0, '(H-h)/2')
+                ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', '(H-h)/2')
+                ->addText($this->post->title, 'white', 28, 72, 400)
+                ->addSubtitles()
                 ->save($path);
 
             $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);

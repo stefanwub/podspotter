@@ -32,6 +32,10 @@ class ClipPostController extends Controller
                 'required',
                 'max:255'
             ],
+            'title' => [
+                'nullable',
+                'string'
+            ],
             'template_name' => [
                 'required',
                 'in:petjeaf-insta-purple,petjeaf-insta-light,petjeaf-reel-purple,petjeaf-reel-light'
@@ -40,6 +44,7 @@ class ClipPostController extends Controller
 
         $post = $clip->posts()->create([
             'name' => $request->get('name'),
+            'title' => $request->get('title'),
             'template_name' => $request->get('template_name'),
             'status' => 'processing'
         ]);

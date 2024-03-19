@@ -25,6 +25,8 @@ class ClipPostService
 
     protected $disk;
 
+    protected $subtitlesFile;
+
     public function __construct(public Clip $clip)
     {
         $this->layers = collect([]);
@@ -137,6 +139,76 @@ class ClipPostService
         );
     }
 
+    public function addSubtitles($color = '#FFFFFF', $background = '#000000', $format = 'ass')
+    {
+        if ($format === 'ass') {
+            $this->subtitlesFile = Str::uuid() . '.' . $format; 
+            
+            Storage::disk('local')->put($this->subtitlesFile, $this->clip->createAssSubtitles(540, 540, $color, $background));
+        }
+
+        if ($format === 'srt') {
+            $this->subtitlesFile = Str::uuid() . '.' . $format; 
+            
+            Storage::disk('local')->put($this->subtitlesFile, $this->clip->createSrtSubtitles());     
+        }
+
+        return $this;
+    }
+
+    public function addText($text, $color, $breakPoint, $size, $y, $font = 'NunitoSans_10pt-ExtraBold.ttf')
+    {
+        if (strlen($text) > $breakPoint) {
+            if ((strlen($text) / 2) <= $breakPoint) {
+                $breakPoint = strlen($text) / 2;
+            }
+        }
+        
+        $textArray = explode(" ", $text);
+
+        $line = '';
+
+        $lines = [];
+
+        foreach ($textArray as $t) {
+            if ($line) {
+                if ((strlen($line) + strlen($t)) > $breakPoint) {
+                    $lines[] = $line;
+                    $line = '';
+                }
+            }
+
+            $line .= $line ? " " . $t : $t;
+        }
+
+        if ($line) {
+            $lines[] = $line;
+        }
+
+        $lineHeight = 8;
+
+        if(count($lines) === 3) {
+            $y = $y - ($size / 2);
+        }
+
+        $offset = count($lines) === 1 ? $y + ($size / 2) : $y;
+       
+        foreach ($lines as $t) {
+            $this->layers->add([
+                'type' => 'text',
+                'text' => $t,
+                'size' => $size,
+                'color' => $color,
+                'font' => Storage::disk('local')->path('fonts/' . $font),
+                'y' => $offset
+            ]);
+
+            $offset = $offset + $size + $lineHeight;
+        }
+
+        return $this;
+    }
+
     public function save($path = null)
     {
         if (! $path) {
@@ -149,8 +221,6 @@ class ClipPostService
         $index = 0;
 
         $audioFileIndex = 0;
-
-        $withSubs = true;
 
         if ($waveform = $this->layers->where('type', 'waveform')->first()) {
             $filter .= "[" . $audioFileIndex . ":a]showwaves=s=" . $waveform['size'] . ":mode=" . $waveform['mode'] . ":colors=" . $waveform['color'] . ":draw=full,format=rgba,colorchannelmixer=aa=0.8[waveform];";
@@ -167,7 +237,7 @@ class ClipPostService
             } 
             
             if ($layer['type'] === 'text') {
-                $filter .= "[v" . $index - 1 . "]drawtext=fontfile=/path/to/font.ttf:text='Your Title Here':fontcolor=white:fontsize=64:x=(w-text_w)/2:y=100[v$index];";
+                $filter .= "[v" . $index - 1 . "]drawtext=fontfile=" . $layer['font'] . ":text='" . $layer['text'] . "':fontcolor=" . $layer['color'] . ":fontsize=" . $layer['size'] .":x=(main_w-text_w)/2:y=" . $layer['y'] ."[v$index];";
             }
 
             if (in_array($layer['type'], ['image', 'background'])) {
@@ -179,13 +249,13 @@ class ClipPostService
 
         $lastMix = "[v" . $index - 1 . "]";
 
-        // if ($withSubs) {
-        //     $filter .= $lastMix . "subtitles=" . Storage::disk('local')->path('subtitles/test.srt') . "[withsubs];";
+        if ($this->subtitlesFile) {
+            $filter .= $lastMix . "subtitles=" . Storage::disk('local')->path($this->subtitlesFile) . "[withsubs];";
             
-        //     // $filter .= $lastMix . "drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,1,3)':text='Hello, welcome to our podcast!', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,4,6)':text='In today's episode, we'll be discussing...', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,7,11)':text='the latest trends in technology and innovation.', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,12,15)':text='Stay tuned!'[withsubs]";
+            // $filter .= $lastMix . "drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,1,3)':text='Hello, welcome to our podcast!', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,4,6)':text='In today's episode, we'll be discussing...', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,7,11)':text='the latest trends in technology and innovation.', drawtext=fontfile=/path/to/font.ttf:fontsize=24:fontcolor=white:x=(w-text_w)/2:y=h-100:enable='between(t,12,15)':text='Stay tuned!'[withsubs]";
             
-        //     $lastMix = "[withsubs]";
-        // }
+            $lastMix = "[withsubs]";
+        }
 
         $filter .= $lastMix . "scale=" . $this->width . ":" . $this->height . ":force_original_aspect_ratio=decrease,pad=" . $this->width . ":" . $this->height . ":(ow-iw)/2:(oh-ih)/2[finalv]";
 
@@ -221,6 +291,10 @@ class ClipPostService
             Storage::disk($this->disk)->put($path, Storage::disk('local')->get($path));
 
             Storage::disk('local')->delete($path);
+
+            if ($this->subtitlesFile) {
+                Storage::disk('local')->delete($this->subtitlesFile);
+            }
 
             return $path;
         }
