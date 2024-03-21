@@ -228,11 +228,11 @@ class Show extends Model
                 'guid' => Str::limit($item->get_id(), 250),
                 'title' => Str::limit($item->get_title(), 250),
                 'description' => $item->get_description(),
-                'episode' => $episodeNumber,
-                'season' => $seasonNumber,
+                'episode' => is_int($episodeNumber) ? $episodeNumber : null,
+                'season' => is_int($seasonNumber) ? $seasonNumber : null,
                 'medium' => 0,
                 'image_url' => Str::limit($imageUrl, 250),
-                'duration' => $durationNumber,
+                'duration' => is_int($durationNumber) ? $durationNumber : 0,
                 'enclosure_url' => $item->get_enclosure()->link,
                 'published_at' => Carbon::parse($item->get_date())
             ]);
