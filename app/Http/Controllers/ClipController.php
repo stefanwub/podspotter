@@ -29,6 +29,12 @@ class ClipController extends Controller
             $query = $query->whereIn('status', explode(',', $request->get('status')));
         }
 
+        $query->withCount(['posts', 'posts as completed_posts_count' => function ($query) {
+            $query->where('status', 'completed');
+        }, 'posts as rendering_posts_count' => function ($query) {
+            $query->whereIn('status', ['rendering', 'processing']);
+        }]);
+
         $query = $query->orderBy($request->get('order_by', 'desc') ?? 'updated_at', 'desc');
 
         return ClipResource::collection($query->paginate());

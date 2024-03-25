@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ClipUpdated;
 use App\Jobs\DownloadEpisodeMedia;
 use App\Jobs\GenerateClipSubtitles;
 use App\Jobs\RenderClip;
@@ -38,6 +39,10 @@ class Clip extends Model
         });
 
         self::saved(function (Clip $clip): void {
+            // if ($clip->status !== $clip->getOriginal('status')) {
+                ClipUpdated::dispatch($clip);
+            // }
+
             if ($clip->status === 'processing' && $clip->getOriginal('status') !== 'processing') {
                 Bus::chain([
                     new DownloadEpisodeMedia($clip->episode),

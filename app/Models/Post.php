@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\PostUpdated;
 use App\Jobs\CreatePostByTemplateName;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,8 @@ class Post extends Model
     protected static function booted()
     {
         self::saved(function (Post $post): void {
+            PostUpdated::dispatch($post);
+            
             if ($post->status === 'processing' && $post->template_name && $post->template_name !== $post->getOriginal('template_name')) {
                 CreatePostByTemplateName::dispatch($post)->onQueue('audio');
             }
