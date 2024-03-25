@@ -87,6 +87,6 @@ class PerformSearchController extends Controller
             })->values()->toArray();
         }
 
-        return Search::performSearch($request->get('query'), offset: $request->get('offset'), limit: $request->get('limit'), filter: $filter);
+        return Search::performSearch($request->get('query'), offset: $request->get('offset'), limit: $request->get('limit'), filter: $filter, includeClips: true);
     }
 }

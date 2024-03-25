@@ -184,7 +184,7 @@ class Search extends Model
         return self::performSearch($this->query, $offset, $limit, $filter);
     }
 
-    public static function performSearch($query, $offset = 0, $limit = 20, $filter = null)
+    public static function performSearch($query, $offset = 0, $limit = 20, $filter = null, $includeClips = false)
     {
         $body = [
             'q' => '"' . $query . '"',
@@ -221,6 +221,18 @@ class Search extends Model
 
         $order = $offset;
 
+        $clips = collect([]);
+
+        if ($includeClips) {
+            $episodeIds = collect($response->json('hits'))->pluck('id');
+
+            $clips = Clip::whereIn('episode_id', $episodeIds)->withCount(['posts', 'posts as completed_posts_count' => function ($query) {
+                $query->where('status', 'completed');
+            }, 'posts as rendering_posts_count' => function ($query) {
+                $query->whereIn('status', ['rendering', 'processing']);
+            }])->get();
+        }
+
         foreach ($response->json('hits') as $hit) {
 
             $sections = collect($hit['_formatted']['sections'])->filter(function ($s) {
@@ -236,7 +248,8 @@ class Search extends Model
                 'show' => $hit['show'],
                 'description' => $hit['description'],
                 'enclosure_url' => $hit['enclosure_url'],
-                'sections' => $sections
+                'sections' => $sections,
+                'clips' => $clips->where('episode_id', $hit['id'])->values()
             ];
 
             $results[] = $result;
