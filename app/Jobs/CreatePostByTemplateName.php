@@ -67,6 +67,28 @@ class CreatePostByTemplateName implements ShouldQueue
             ]);
         }
 
+        if ($this->post->template_name === 'video-petjeaf-insta-light') {
+            $this->post->update([
+                'storage_key' => $path,
+                'storage_disk' => $this->post->clip?->storage_disk,
+                'status' => 'rendering'
+            ]);
+
+            ClipPostService::clip($this->post->clip)
+                ->size(1080, 1080)
+                ->addClipVideo()
+                ->addText($this->post->title, '#510fa8', 26, 72, 100, 'white')
+                ->addSubtitles('#FFFFFF', '#000000')
+                ->save($path);
+
+            $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
+
+            $this->post->update([
+                'status' => 'completed',
+                'thumbnail_storage_key' => $thumbPath
+            ]);
+        }
+
         if ($this->post->template_name === 'video-petjeaf-reel') {
             $this->post->update([
                 'storage_key' => $path,
@@ -78,6 +100,28 @@ class CreatePostByTemplateName implements ShouldQueue
                 ->size(1080, 1920)
                 ->addClipVideo()
                 ->addText($this->post->title, 'white', 26, 72, 100, '#510fa8')
+                ->addSubtitles('#FFFFFF', '#000000')
+                ->save($path);
+
+            $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
+
+            $this->post->update([
+                'status' => 'completed',
+                'thumbnail_storage_key' => $thumbPath
+            ]);
+        }
+
+        if ($this->post->template_name === 'video-petjeaf-reel-light') {
+            $this->post->update([
+                'storage_key' => $path,
+                'storage_disk' => $this->post->clip?->storage_disk,
+                'status' => 'rendering'
+            ]);
+
+            ClipPostService::clip($this->post->clip)
+                ->size(1080, 1920)
+                ->addClipVideo()
+                ->addText($this->post->title, '#510fa8', 26, 72, 100, 'white')
                 ->addSubtitles('#FFFFFF', '#000000')
                 ->save($path);
 
