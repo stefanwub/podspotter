@@ -82,7 +82,7 @@ class Show extends Model
 
         $feed = FeedsFacade::make($this->feed_url);
 
-        if (Str::contains($this->feed_url, 'youtube.com/feeds/videos.xml')) {
+        if (Str::contains($this->feed_url, 'youtube.com')) {
             $this->update([
                 'title' => htmlspecialchars_decode($feed->get_title()),
                 'language' => 'nl',
