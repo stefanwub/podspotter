@@ -106,6 +106,17 @@ class ClipPostService
         return $this;
     }
 
+    public function addClipVideo()
+    {
+        $this->layers->add([
+            'type' => 'clip-video',
+            'width' => $this->width,
+            'height' => $this->height
+        ]);
+
+        return $this;
+    }
+
     public function addImageFromDisk($imagePath, $disk, $width = 1200, $height = 1200, $radius = 50, $x = '(W-w)/2', $y = '(H-h)/2')
     {
         $image = $radius ? $this->getroundedCornerImage(Storage::disk($disk)->url($imagePath), $radius) : Storage::disk($disk)->get($imagePath);
@@ -156,8 +167,10 @@ class ClipPostService
         return $this;
     }
 
-    public function addText($text, $color, $breakPoint, $size, $y, $font = 'NunitoSans_10pt-ExtraBold.ttf')
+    public function addText($text, $color, $breakPoint, $size, $y, $box = null, $font = 'NunitoSans_10pt-ExtraBold.ttf')
     {
+        if (! $text) return $this;
+
         if (strlen($text) > $breakPoint) {
             if ((strlen($text) / 2) <= $breakPoint) {
                 $breakPoint = strlen($text) / 2;
@@ -199,6 +212,7 @@ class ClipPostService
                 'text' => $t,
                 'size' => $size,
                 'color' => $color,
+                'box' => $box,
                 'font' => Storage::disk('local')->path('fonts/' . $font),
                 'y' => $offset
             ]);
@@ -220,13 +234,17 @@ class ClipPostService
         $fileIndex = 1;
         $index = 0;
 
-        $audioFileIndex = 0;
+        $clipFileIndex = 0;
 
         if ($waveform = $this->layers->where('type', 'waveform')->first()) {
-            $filter .= "[" . $audioFileIndex . ":a]showwaves=s=" . $waveform['size'] . ":mode=" . $waveform['mode'] . ":colors=" . $waveform['color'] . ":draw=full,format=rgba,colorchannelmixer=aa=0.8[waveform];";
+            $filter .= "[" . $clipFileIndex . ":a]showwaves=s=" . $waveform['size'] . ":mode=" . $waveform['mode'] . ":colors=" . $waveform['color'] . ":draw=full,format=rgba,colorchannelmixer=aa=0.8[waveform];";
         }
 
         foreach($this->layers as $layer) {
+            if ($layer['type'] === 'clip-video') {
+                $filter .= "[" . $clipFileIndex . ":v]scale=" . $layer['width'] .":" . $layer['height'] . ":force_original_aspect_ratio=increase,crop=" . $layer['width'] .":" . $layer['height'] . "[v$index];";
+            }
+
             if ($layer['type'] === 'waveform') {
                 $filter .= "[" . $fileIndex - 1 . ":v][waveform]overlay=" . $layer['overlay'] . "[v$index];";
             }
@@ -237,7 +255,13 @@ class ClipPostService
             } 
             
             if ($layer['type'] === 'text') {
-                $filter .= "[v" . $index - 1 . "]drawtext=fontfile=" . $layer['font'] . ":text='" . $layer['text'] . "':fontcolor=" . $layer['color'] . ":fontsize=" . $layer['size'] .":x=(main_w-text_w)/2:y=" . $layer['y'] ."[v$index];";
+                $filter .= "[v" . $index - 1 . "]drawtext=fontfile=" . $layer['font'] . ":text='" . $layer['text'] . "':fontcolor=" . $layer['color'] . ":fontsize=" . $layer['size'] .":x=(main_w-text_w)/2:y=" . $layer['y'];
+                
+                if ($layer['box']) {
+                    $filter .= ":box=1:boxcolor=" . $layer['box'] . "@1:boxborderw=15";
+                }
+                
+                $filter .= "[v$index];";
             }
 
             if (in_array($layer['type'], ['image', 'background'])) {
@@ -271,7 +295,7 @@ class ClipPostService
 
         $command .= "-filter_complex $filterComplex -map '[finalv]' ";
 
-        $command .= "-map $audioFileIndex:a -pix_fmt yuv420p ";
+        $command .= "-map $clipFileIndex:a -pix_fmt yuv420p ";
 
         $command .= "-c:v libx264 -c:a aac -shortest ";
 

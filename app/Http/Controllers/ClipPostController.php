@@ -38,7 +38,7 @@ class ClipPostController extends Controller
             ],
             'template_name' => [
                 'required',
-                'in:petjeaf-insta-purple,petjeaf-insta-light,petjeaf-reel-purple,petjeaf-reel-light'
+                'in:petjeaf-insta-purple,petjeaf-insta-light,petjeaf-reel-purple,petjeaf-reel-light,video-petjeaf-insta,video-petjeaf-reel'
             ],
         ]);
 
