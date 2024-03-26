@@ -32,16 +32,16 @@ class GenerateClipSubtitles implements ShouldQueue
      */
     public function handle(): void
     {
-        if (! $this->clip->storage_path) return;
+        if (! $this->clip->storage_key) return;
 
-        $audioPath = $this->clip->storage_path;
+        $audioPath = $this->clip->storage_key;
 
         if (Str::endsWith($audioPath, '.mp4')) {
             $audioPath = Str::replace('.mp4', '.mp3', $audioPath);
 
             if (! Storage::disk($this->clip->storage_disk)->exists($audioPath)) {
                 FFMpeg::fromDisk($this->clip->storage_disk)
-                    ->open($this->clip->storage_path)
+                    ->open($this->clip->storage_key)
                     ->toDisk($this->clip->storage_disk)
                     ->inFormat(new Mp3)
                     ->save($audioPath);
