@@ -35,27 +35,49 @@ class RenderClip implements ShouldQueue
             'status' => 'rendering'
         ]);
 
-        $mediaFile = $this->clip->episode?->mediaFile;
-
         $start = \FFMpeg\Coordinate\TimeCode::fromSeconds($this->clip->start_region / 1000);
         $duration = \FFMpeg\Coordinate\TimeCode::fromSeconds(($this->clip->end_region / 1000) - ($this->clip->start_region / 1000));
 
-        $clipFilter = new \FFMpeg\Filters\Audio\AudioClipFilter($start, $duration);
+        $mediaFile = $this->clip->episode?->mediaFile;
 
-        $filename = "clips/" . Str::uuid() . ".mp3";
+        if ($mediaFile->video_storage_key) {
+            $clipFilter = new \FFMpeg\Filters\Video\ClipFilter($start, $duration);
 
-        FFMpeg::fromDisk($mediaFile->storage_disk)
-            ->open($mediaFile->audio_storage_key)
-            ->addFilter($clipFilter)
-            ->export()
-            ->toDisk(config('filesystems.default'))
-            ->inFormat(new Mp3)
-            ->save($filename);
+            $filename = "clips/" . Str::uuid() . ".mp4";
 
-        $this->clip->update([
-            'status' => 'completed',
-            'storage_disk' => config('filesystems.default'),
-            'storage_key' => $filename
-        ]);
+            FFMpeg::fromDisk($mediaFile->storage_disk)
+                ->open($mediaFile->video_storage_key)
+                ->addFilter($clipFilter)
+                ->export()
+                ->toDisk(config('filesystems.default'))
+                ->inFormat(new \FFMpeg\Format\Video\X264)
+                ->save($filename);
+
+            $this->clip->update([
+                'status' => 'completed',
+                'storage_disk' => config('filesystems.default'),
+                'storage_key' => $filename
+            ]);
+        }
+
+        if ($mediaFile->audio_storage_key) {
+            $clipFilter = new \FFMpeg\Filters\Audio\AudioClipFilter($start, $duration);
+
+            $filename = "clips/" . Str::uuid() . ".mp3";
+
+            FFMpeg::fromDisk($mediaFile->storage_disk)
+                ->open($mediaFile->audio_storage_key)
+                ->addFilter($clipFilter)
+                ->export()
+                ->toDisk(config('filesystems.default'))
+                ->inFormat(new Mp3)
+                ->save($filename);
+
+            $this->clip->update([
+                'status' => 'completed',
+                'storage_disk' => config('filesystems.default'),
+                'storage_key' => $filename
+            ]);
+        }
     }
 }

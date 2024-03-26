@@ -3,12 +3,15 @@
 namespace App\Jobs;
 
 use App\Models\Episode;
+use Bus;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Storage;
+use Str;
 
 class DownloadEpisodeMedia implements ShouldQueue
 {
@@ -46,6 +49,24 @@ class DownloadEpisodeMedia implements ShouldQueue
     public function handle(): void
     {
         if ($this->episode->mediaFile) return;
+
+        if ($this->episode->medium === 1) {
+            $path = 'clips';
+
+            $filename = Str::uuid() . '.mp4';
+
+            $episode = $this->episode;
+
+            DownloadYoutubeVideo::dispatchSync($this->episode->enclosure_url, $path, $filename);
+            CopyFromLocalToStorage::dispatchSync($path, $filename);
+
+            $episode->mediaFile()->create([
+                'video_storage_key' => $path . '/' . $filename,
+                'storage_disk' => config('filesystems.default')
+            ]);
+
+            return;
+        }
 
         $waveformFileName = "waveforms/episodes/" . $this->episode->id . ".json";
             
