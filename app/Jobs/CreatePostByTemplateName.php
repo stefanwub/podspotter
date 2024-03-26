@@ -145,7 +145,7 @@ class CreatePostByTemplateName implements ShouldQueue
                 ->addBackground('gradient:#510fa8-#4338ca')
                 ->addWaveform('#c7d2fe', 'cline', 1080, 480, 0, 350)
                 ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', 350)
-                ->addText($this->post->title, 'white', 24, 72, 100)
+                ->addText($this->post->title, 'white', 26, 72, 100)
                 ->addSubtitles('#FFFFFF', '#000000')
                 ->save($path);
 
@@ -169,7 +169,7 @@ class CreatePostByTemplateName implements ShouldQueue
                 ->addBackground('gradient:#cccccc-#ffffff')
                 ->addWaveform('#510fa8', 'cline', 1080, 480, 0, 350)
                 ->addShowImage($this->post->clip?->episode?->show, 480, 480, 100, '(W-w)/2', 350)
-                ->addText($this->post->title, 'Black', 24, 72, 100)
+                ->addText($this->post->title, 'Black', 26, 72, 100)
                 ->addSubtitles('#FFFFFF', '#000000')
                 ->save($path);
 
