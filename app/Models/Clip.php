@@ -47,7 +47,7 @@ class Clip extends Model
                 Bus::chain([
                     new DownloadEpisodeMedia($clip->episode),
                     new RenderClip($clip)
-                ])->dispatch();
+                ])->onQueue('audio')->dispatch();
             }
 
             if ($clip->status === 'completed' && $clip->getOriginal('status') !== 'completed') {
