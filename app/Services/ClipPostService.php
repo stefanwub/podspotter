@@ -258,7 +258,7 @@ class ClipPostService
                 $filter .= "[v" . $index - 1 . "]drawtext=fontfile=" . $layer['font'] . ":text='" . $layer['text'] . "':fontcolor=" . $layer['color'] . ":fontsize=" . $layer['size'] .":x=(main_w-text_w)/2:y=" . $layer['y'];
                 
                 if ($layer['box']) {
-                    $filter .= ":box=1:boxcolor=" . $layer['box'] . "@1:boxborderw=15";
+                    $filter .= ":box=1:boxcolor=" . $layer['box'] . "@0.8:boxborderw=15";
                 }
                 
                 $filter .= "[v$index];";
