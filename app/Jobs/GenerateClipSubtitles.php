@@ -42,6 +42,7 @@ class GenerateClipSubtitles implements ShouldQueue
             if (! Storage::disk($this->clip->storage_disk)->exists($audioPath)) {
                 FFMpeg::fromDisk($this->clip->storage_disk)
                     ->open($this->clip->storage_key)
+                    ->export()
                     ->toDisk($this->clip->storage_disk)
                     ->inFormat(new Mp3)
                     ->save($audioPath);
