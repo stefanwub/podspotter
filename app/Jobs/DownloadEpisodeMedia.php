@@ -50,24 +50,6 @@ class DownloadEpisodeMedia implements ShouldQueue
     {
         if ($this->episode->mediaFile) return;
 
-        if ($this->episode->medium === 1) {
-            $path = 'clips';
-
-            $filename = Str::uuid() . '.mp4';
-
-            $episode = $this->episode;
-
-            DownloadYoutubeVideo::dispatchSync($this->episode->enclosure_url, $path, $filename);
-            CopyFromLocalToStorage::dispatchSync($path, $filename);
-
-            $episode->mediaFile()->create([
-                'video_storage_key' => $path . '/' . $filename,
-                'storage_disk' => config('filesystems.default')
-            ]);
-
-            return;
-        }
-
         $waveformFileName = "waveforms/episodes/" . $this->episode->id . ".json";
             
         Storage::disk('local')->put($waveformFileName, "");

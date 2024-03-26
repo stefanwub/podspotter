@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Events\ClipUpdated;
+use App\Jobs\CopyFromLocalToStorage;
 use App\Jobs\DownloadEpisodeMedia;
+use App\Jobs\DownloadYoutubeVideo;
 use App\Jobs\GenerateClipSubtitles;
 use App\Jobs\RenderClip;
 use Bus;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Storage;
+use Str;
 
 class Clip extends Model
 {
@@ -39,15 +42,33 @@ class Clip extends Model
         });
 
         self::saved(function (Clip $clip): void {
-            // if ($clip->status !== $clip->getOriginal('status')) {
-                ClipUpdated::dispatch($clip);
-            // }
+            ClipUpdated::dispatch($clip);
 
             if ($clip->status === 'processing' && $clip->getOriginal('status') !== 'processing') {
-                Bus::chain([
-                    new DownloadEpisodeMedia($clip->episode),
-                    new RenderClip($clip)
-                ])->onQueue('audio')->dispatch();
+                if ($clip->episode->medium === 0) {
+                    Bus::chain([
+                        new DownloadEpisodeMedia($clip->episode),
+                        new RenderClip($clip)
+                    ])->onQueue('audio')->dispatch();
+                } else if ($clip->episode->medium === 1) {
+                    $path = 'clips';
+
+                    $filename = Str::uuid() . '.mp4';
+
+                    $episode = $clip->episode;
+
+                    Bus::chain([
+                        new DownloadYoutubeVideo($episode->enclosure_url, $path, $filename).
+                        new CopyFromLocalToStorage($path, $filename),
+                        dispatch(function () use ($episode, $path, $filename) {
+                            $episode->mediaFile()->create([
+                                'video_storage_key' => $path . '/' . $filename,
+                                'storage_disk' => config('filesystems.default')
+                            ]);
+                        }),
+                        new RenderClip($clip)
+                    ])->onQueue('audio')->dispatch();
+                }
             }
 
             if ($clip->status === 'completed' && $clip->getOriginal('status') !== 'completed') {
