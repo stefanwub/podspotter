@@ -11,6 +11,7 @@ use App\Http\Controllers\GetClipSubtitlesController;
 use App\Http\Controllers\GetOrCreateEpisodeMediaFileController;
 use App\Http\Controllers\GetRoundedShowImageController;
 use App\Http\Controllers\GpuController;
+use App\Http\Controllers\ImportShowsFromCsvController;
 use App\Http\Controllers\PerformSearchController;
 use App\Http\Controllers\PerformSemanticSearchController;
 use App\Http\Controllers\SearchController;
@@ -73,6 +74,8 @@ Route::put('clips/{clip}/subtitles', UpdateClipSubtitlesController::class)->name
 Route::get('clips/{clip}/subtitles', GetClipSubtitlesController::class)->name('clip.subtitles');
 Route::post('clips/{clip}/subtitles', GenerateClipSubtitlesController::class)->name('clip.generate-subtitles');
 Route::post('clips/{clip}/subtitles-webhook', ClipSubtitlesWebhookController::class)->name('clip.subtitles-webhook');
+
+// Route::get('import-pages', ImportShowsFromCsvController::class);
 
 // Route::get('/search', function (Request $request) {
 //     $response = Http::withHeaders([

@@ -67,6 +67,29 @@ class CreatePostByTemplateName implements ShouldQueue
             ]);
         }
 
+        if ($this->post->template_name === 'video-petjeaf-insta-keep-ratio') {
+            $this->post->update([
+                'storage_key' => $path,
+                'storage_disk' => $this->post->clip?->storage_disk,
+                'status' => 'rendering'
+            ]);
+
+            ClipPostService::clip($this->post->clip)
+                ->size(1080, 1080)
+                ->addBackground('gradient:#510fa8-#4338ca')
+                ->addClipVideo(keepAspectRatio: true)
+                ->addText($this->post->title, 'white', 26, 72, 75, '#510fa8')
+                ->addSubtitles('#FFFFFF', '#000000')
+                ->save($path);
+
+            $thumbPath = $this->addThumbnail($path, $this->post->clip?->storage_disk);
+
+            $this->post->update([
+                'status' => 'completed',
+                'thumbnail_storage_key' => $thumbPath
+            ]);
+        }
+
         if ($this->post->template_name === 'video-petjeaf-insta-light') {
             $this->post->update([
                 'storage_key' => $path,

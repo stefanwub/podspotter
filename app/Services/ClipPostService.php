@@ -106,12 +106,13 @@ class ClipPostService
         return $this;
     }
 
-    public function addClipVideo()
+    public function addClipVideo($keepAspectRatio = false)
     {
         $this->layers->add([
             'type' => 'clip-video',
             'width' => $this->width,
-            'height' => $this->height
+            'height' => $this->height,
+            'keep-aspect-ratio' => $keepAspectRatio
         ]);
 
         return $this;
@@ -240,11 +241,24 @@ class ClipPostService
             $filter .= "[" . $clipFileIndex . ":a]showwaves=s=" . $waveform['size'] . ":mode=" . $waveform['mode'] . ":colors=" . $waveform['color'] . ":draw=full,format=rgba,colorchannelmixer=aa=0.8[waveform];";
         }
 
+        $backgroundLayer = $this->layers->where('type', 'background')->first();
+
         foreach($this->layers as $layer) {
             if ($layer['type'] === 'clip-video') {
-                $filter .= "[" . $clipFileIndex . ":v]scale=" . $layer['width'] .":" . $layer['height'] . ":force_original_aspect_ratio=increase,crop=" . $layer['width'] .":" . $layer['height'] . "[v$index];";
-            }
+                if ($layer['keep-aspect-ratio']) {
+                    $filter .= "[" . $clipFileIndex . ":v]scale=" . $layer['width'] .":" . $layer['height'] . ":force_original_aspect_ratio=decrease";
 
+                    if ($backgroundLayer) {
+                        $filter .= "[video];[1:v][video]overlay=(W-w)/2:(H-h)/2+50:format=auto";
+                    }
+
+                    $filter .= "[v$index];";
+
+                } else {
+                    $filter .= "[" . $clipFileIndex . ":v]scale=" . $layer['width'] .":" . $layer['height'] . ":force_original_aspect_ratio=increase,crop=" . $layer['width'] .":" . $layer['height'] . "[v$index];";
+                }
+            }
+            
             if ($layer['type'] === 'waveform') {
                 $filter .= "[" . $fileIndex - 1 . ":v][waveform]overlay=" . $layer['overlay'] . "[v$index];";
             }
@@ -347,3 +361,5 @@ class ClipPostService
     }
 
 }
+
+// ffmpeg -i /Users/stefan/Dev/Laravel/podcastsearch/storage/app/clips/9e636105-f9bd-469e-bff5-47668a32b052.mp4 -i /Users/stefan/Dev/Laravel/podcastsearch/storage/app/backgrounds/gradient:#510fa8-#4338ca-1080-1080.png -filter_complex '[0:v]scale=1080:1080:force_original_aspect_ratio=decrease[video];[1:v][video]overlay=(W-w)/2:(H-h)/2[v1];[v1]drawtext=fontfile=/Users/stefan/Dev/Laravel/podcastsearch/storage/app/fonts/NunitoSans_10pt-ExtraBold.ttf:text='\''De afgezaagde backstage'\'':fontcolor=white:fontsize=72:x=(main_w-text_w)/2:y=100:box=1:boxcolor=#510fa8@0.8:boxborderw=15[v2];[v2]drawtext=fontfile=/Users/stefan/Dev/Laravel/podcastsearch/storage/app/fonts/NunitoSans_10pt-ExtraBold.ttf:text='\''van Ruben Tijl Ruben'\'':fontcolor=white:fontsize=72:x=(main_w-text_w)/2:y=180:box=1:boxcolor=#510fa8@0.8:boxborderw=15[v3];[v3]subtitles=/Users/stefan/Dev/Laravel/podcastsearch/storage/app/abd9ec20-4a2d-4dce-8e14-3f469ca271e2.ass[withsubs]' -map '[withsubs]' -map 0:a -pix_fmt yuv420p -c:v libx264 -c:a aac -shortest /Users/stefan/Downloads/testratio.mp4
