@@ -31,6 +31,10 @@ class PerformSearchController extends Controller
                 'numeric',
                 'min:0'
             ],
+            'medium' => [
+                'nullable',
+                'in:0,1'
+            ],
             'include_categories' => [
                 'nullable',
                 'array'
@@ -85,6 +89,12 @@ class PerformSearchController extends Controller
             $filter[] = collect($request->get('include_shows'))->map(function ($category) {
                 return "show_id = " . $category;
             })->values()->toArray();
+        }
+
+        if ($request->get('medium') || $request->get('medium') === '0') {
+            $filter[] = [
+                'medium = ' . $request->get('medium')
+            ];
         }
 
         return Search::performSearch($request->get('query'), offset: $request->get('offset'), limit: $request->get('limit'), filter: $filter, includeClips: true);

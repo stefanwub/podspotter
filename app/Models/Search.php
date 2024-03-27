@@ -226,6 +226,8 @@ class Search extends Model
         if ($includeClips) {
             $episodeIds = collect($response->json('hits'))->pluck('id');
 
+            $episodes = Episode::whereIn('id', $episodeIds)->get();
+
             $clips = Clip::whereIn('episode_id', $episodeIds)->withCount(['posts', 'posts as completed_posts_count' => function ($query) {
                 $query->where('status', 'completed');
             }, 'posts as rendering_posts_count' => function ($query) {
@@ -239,10 +241,13 @@ class Search extends Model
                 return Str::contains($s['t'], '<mark>');
             })->values();
 
+            $episode = $episodes->where('id', $hit['id'])->first();
+
             $result = [
                 'id' => $order,
                 'episode_id' => $hit['id'],
                 'title' => $hit['title'],
+                'episode_image_url' => $episode?->image_url,
                 'published_at' => Carbon::createFromTimestamp($hit['published_at']),
                 'categories' => $hit['categories'],
                 'show' => $hit['show'],
