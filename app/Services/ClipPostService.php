@@ -337,7 +337,7 @@ class ClipPostService
             return $path;
         }
 
-        throw new Exception($command . ' :' . implode(", ", $output));
+        throw new Exception($command . ' :' . implode(", ", $output) . ' | return var: ' . $return_var);
     }
 
     public function getroundedCornerImage($imagePath, $radius)
