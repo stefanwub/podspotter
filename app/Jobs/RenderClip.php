@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Clip;
+use Bus;
 use Exception;
 use FFMpeg\Format\Audio\Mp3;
 use Illuminate\Bus\Queueable;
@@ -34,10 +35,6 @@ class RenderClip implements ShouldQueue
         if ($this->clip->episode?->medium === 0 && ! $this->clip->episode?->mediaFile) return;
 
         try {
-            $this->clip->update([
-                'status' => 'rendering'
-            ]);
-
             $start = \FFMpeg\Coordinate\TimeCode::fromSeconds($this->clip->start_region / 1000);
             $duration = \FFMpeg\Coordinate\TimeCode::fromSeconds(($this->clip->end_region / 1000) - ($this->clip->start_region / 1000));
 
@@ -47,8 +44,25 @@ class RenderClip implements ShouldQueue
                 $episodeLocalFile = "episodes/" . $this->clip->episode_id . ".mp4";
 
                 if (! Storage::disk('local')->exists($episodeLocalFile)) {
-                    DownloadYoutubeVideo::dispatchSync($this->clip->episode->enclosure_url, 'episodes', $this->clip->episode_id . ".mp4");
+                    if ($this->clip->status === 'downloading') {
+                        throw new Exception('Downloading failed');
+                    }
+
+                    Bus::chain([
+                       new DownloadYoutubeVideo($this->clip->episode->enclosure_url, 'episodes', $this->clip->episode_id . ".mp4"),
+                       new RenderClip($this->clip)
+                    ])->onQueue('video')->dispatch();
+
+                    $this->clip->update([
+                        'status' => 'downloading'
+                    ]);
+
+                    return;
                 }
+
+                $this->clip->update([
+                    'status' => 'rendering'
+                ]);
 
                 $clipFilename = 'clips/' . $this->clip->id . ".mp4";
 
@@ -72,6 +86,11 @@ class RenderClip implements ShouldQueue
             $mediaFile = $this->clip->episode?->mediaFile;
 
             if ($mediaFile?->audio_storage_key) {
+
+                $this->clip->update([
+                    'status' => 'rendering'
+                ]);
+
                 $clipFilter = new \FFMpeg\Filters\Audio\AudioClipFilter($start, $duration);
 
                 $filename = "clips/" . $this->clip->id . ".mp3";
@@ -89,7 +108,14 @@ class RenderClip implements ShouldQueue
                     'storage_disk' => config('filesystems.default'),
                     'storage_key' => $filename
                 ]);
+
+                return;
             }
+
+            $this->clip->update([
+                'status' => 'failed'
+            ]);
+
         } catch(Exception $e) {
             $this->clip->update([
                 'status' => 'failed'
