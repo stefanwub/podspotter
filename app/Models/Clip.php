@@ -51,23 +51,7 @@ class Clip extends Model
                         new RenderClip($clip)
                     ])->onQueue('audio')->dispatch();
                 } else if ($clip->episode->medium === 1) {
-                    $path = 'clips';
-
-                    $filename = Str::uuid() . '.mp4';
-
-                    $episode = $clip->episode;
-
-                    Bus::chain([
-                        new DownloadYoutubeVideo($episode->enclosure_url, $path, $filename),
-                        new CopyFromLocalToStorage($path, $filename),
-                        dispatch(function () use ($episode, $path, $filename) {
-                            $episode->mediaFile()->create([
-                                'video_storage_key' => $path . '/' . $filename,
-                                'storage_disk' => config('filesystems.default')
-                            ]);
-                        }),
-                        new RenderClip($clip)
-                    ])->onQueue('audio')->dispatch();
+                    RenderClip::dispatch($clip)->onQueue('video');
                 }
             }
 
