@@ -28,6 +28,7 @@ class ClipResource extends JsonResource
             'storage_disk' => $this->storage_disk,
             'storage_key' => $this->storage_key,
             'episode_id' => $this->episode_id,
+            'posts_count' => $this->posts_count,
             'episode' => [
                 'id' => $this->episode?->id,
                 'title' => $this->episode?->title,
