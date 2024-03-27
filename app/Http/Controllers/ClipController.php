@@ -23,7 +23,7 @@ class ClipController extends Controller
             ]
         ]);
 
-        $query = $team->clips()->with('episode', 'episode.show');
+        $query = $team->clips()->with('episode', 'episode.show', 'collections');
 
         if ($request->get('status')) {
             $query = $query->whereIn('status', explode(',', $request->get('status')));

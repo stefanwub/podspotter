@@ -318,7 +318,7 @@ class ClipPostService
         exec($command, $output, $return_var);
 
         if ($return_var === 0) {
-            Storage::disk('local')->delete($this->clipPath);
+            Storage::disk('local')->delete($this->clip->storage_key);
 
             foreach($this->layers as $layer) {
                 if (isset($layer['path'])) {

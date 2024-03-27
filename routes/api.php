@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClipCollectionController;
 use App\Http\Controllers\ClipController;
 use App\Http\Controllers\ClipPostController;
 use App\Http\Controllers\ClipSubtitlesWebhookController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CreateEpisodeWaveformController;
 use App\Http\Controllers\DownloadPostController;
 use App\Http\Controllers\GenerateClipSubtitlesController;
@@ -74,6 +76,12 @@ Route::put('clips/{clip}/subtitles', UpdateClipSubtitlesController::class)->name
 Route::get('clips/{clip}/subtitles', GetClipSubtitlesController::class)->name('clip.subtitles');
 Route::post('clips/{clip}/subtitles', GenerateClipSubtitlesController::class)->name('clip.generate-subtitles');
 Route::post('clips/{clip}/subtitles-webhook', ClipSubtitlesWebhookController::class)->name('clip.subtitles-webhook');
+
+Route::apiResource('teams.collections', CollectionController::class);
+
+Route::get('/collections/{collection}/clips', [ ClipCollectionController::class, 'index']);
+Route::post('/collections/{collection}/clips/{clip}', [ ClipCollectionController::class, 'store']);
+Route::delete('/collections/{collection}/clips/{clip}', [ ClipCollectionController::class, 'destroy']);
 
 // Route::get('import-pages', ImportShowsFromCsvController::class);
 

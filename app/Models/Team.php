@@ -26,6 +26,11 @@ class Team extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function collections() : HasMany
+    {
+        return $this->hasMany(Collection::class);
+    }
+
     public function searches() : HasMany
     {
         return $this->hasMany(Search::class);

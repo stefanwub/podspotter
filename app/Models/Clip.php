@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Storage;
 use Str;
@@ -59,6 +60,13 @@ class Clip extends Model
                 GenerateClipSubtitles::dispatch($clip);
             }
         });
+    }
+
+    public function collections() : BelongsToMany
+    {
+        return $this->belongsToMany(Collection::class)
+            ->withTimestamps()
+            ->withPivot('sort');
     }
 
     public function team() : BelongsTo
