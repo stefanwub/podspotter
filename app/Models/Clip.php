@@ -58,7 +58,7 @@ class Clip extends Model
                     $episode = $clip->episode;
 
                     Bus::chain([
-                        new DownloadYoutubeVideo($episode->enclosure_url, $path, $filename).
+                        new DownloadYoutubeVideo($episode->enclosure_url, $path, $filename),
                         new CopyFromLocalToStorage($path, $filename),
                         dispatch(function () use ($episode, $path, $filename) {
                             $episode->mediaFile()->create([
