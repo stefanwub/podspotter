@@ -18,7 +18,9 @@ class ShowResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'image_url' => $this->image_url
+            'image_url' => $this->image_url,
+            'image_storage_disk' => $this->image_storage_disk,
+            'image_storage_key' => $this->image_storage_key
         ];
     }
 }

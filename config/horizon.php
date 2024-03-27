@@ -184,6 +184,21 @@ return [
     ],
 
     'environments' => [
+        'media' => [
+            'supervisor-for-media' => [
+                'connection' => 'redis',
+                'queue' => ['audio', 'video'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'maxProcesses' => 1,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 128,
+                'tries' => 1,
+                'timeout' => 1000,
+                'nice' => 0,
+            ],
+        ],
         'production' => [
             'supervisor-1' => [
                 'connection' => 'redis',
@@ -212,34 +227,6 @@ return [
                 'memory' => 128,
                 'tries' => 1,
                 'timeout' => 60,
-                'nice' => 0,
-            ],
-
-            'supervisor-for-audio' => [
-                'connection' => 'redis',
-                'queue' => ['audio'],
-                'balance' => 'auto',
-                'autoScalingStrategy' => 'time',
-                'maxProcesses' => 1,
-                'maxTime' => 0,
-                'maxJobs' => 0,
-                'memory' => 128,
-                'tries' => 1,
-                'timeout' => 1000,
-                'nice' => 0,
-            ],
-
-            'supervisor-for-video' => [
-                'connection' => 'redis',
-                'queue' => ['video'],
-                'balance' => 'auto',
-                'autoScalingStrategy' => 'time',
-                'maxProcesses' => 1,
-                'maxTime' => 0,
-                'maxJobs' => 0,
-                'memory' => 128,
-                'tries' => 1,
-                'timeout' => 1000,
                 'nice' => 0,
             ],
 
